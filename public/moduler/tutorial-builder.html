@@ -1,0 +1,1233 @@
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tutorial Builder — Editor Visual</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <style>
+/* ============================================================
+   DESIGN SYSTEM
+   ============================================================ */
+:root {
+    --bg: #f8f9fb;
+    --bg-panel: #ffffff;
+    --bg-card: #f6f8fa;
+    --bg-hover: #f0f2f5;
+    --bg-code: #1e1e2e;
+    --border: #d8dee4;
+    --border-light: #e8ecf0;
+    --text: #1f2328;
+    --text-muted: #656d76;
+    --text-heading: #1f2328;
+    --accent: #0969da;
+    --accent-hover: #0756b5;
+    --accent-light: rgba(9,105,218,0.08);
+    --accent-green: #1a7f37;
+    --accent-yellow: #9a6700;
+    --accent-red: #cf222e;
+    --accent-purple: #8250df;
+    --accent-orange: #bc4c00;
+    --radius: 8px;
+    --radius-lg: 12px;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+    --transition: 0.2s ease;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 14px;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* SVG Icon base */
+.icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+.icon svg {
+    width: 100%;
+    height: 100%;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+}
+.icon-lg { width: 20px; height: 20px; }
+
+/* ============================================================
+   TOOLBAR
+   ============================================================ */
+.toolbar {
+    height: 56px;
+    background: var(--bg-panel);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 12px;
+    flex-shrink: 0;
+    z-index: 50;
+}
+.toolbar-brand {
+    font-weight: 800;
+    font-size: 1.05em;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: -0.3px;
+    flex-shrink: 0;
+}
+.toolbar-sep {
+    width: 1px;
+    height: 28px;
+    background: var(--border);
+    flex-shrink: 0;
+}
+.toolbar-title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.92em;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+.toolbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 0.82em;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--bg-panel);
+    color: var(--text);
+    transition: all var(--transition);
+    white-space: nowrap;
+}
+.btn:hover { background: var(--bg-hover); border-color: #c0c6cc; }
+.btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+.btn-danger { color: var(--accent-red); border-color: rgba(207,34,46,0.3); }
+.btn-danger:hover { background: rgba(207,34,46,0.08); border-color: var(--accent-red); }
+.btn-success { background: var(--accent-green); color: #fff; border-color: var(--accent-green); }
+.btn-success:hover { background: #168030; }
+.btn-sm { padding: 4px 10px; font-size: 0.78em; }
+.btn-icon { padding: 6px; min-width: 30px; justify-content: center; }
+.btn-icon.btn-sm { padding: 3px; min-width: 26px; }
+
+/* ============================================================
+   MAIN LAYOUT
+   ============================================================ */
+.app-layout { flex: 1; display: flex; overflow: hidden; }
+
+/* ============================================================
+   PANEL STRUKTUR (SIDEBAR KIRI)
+   ============================================================ */
+.panel-struktur {
+    width: 280px; background: var(--bg-panel); border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; flex-shrink: 0; overflow: hidden;
+}
+.panel-struktur-header { padding: 16px 16px 12px; border-bottom: 1px solid var(--border-light); flex-shrink: 0; }
+.panel-struktur-header h3 { font-size: 0.82em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 10px; }
+.panel-struktur-list { flex: 1; overflow-y: auto; padding: 8px; }
+.panel-struktur-list::-webkit-scrollbar { width:4px; }
+.panel-struktur-list::-webkit-scrollbar-track { background:transparent; }
+.panel-struktur-list::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
+
+.struktur-item {
+    display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 6px;
+    cursor: pointer; transition: all var(--transition); margin-bottom: 2px;
+    border: 1px solid transparent; font-size: 0.88em; color: var(--text); font-weight: 500;
+}
+.struktur-item:hover { background: var(--bg-hover); }
+.struktur-item.active { background: var(--accent-light); color: var(--accent); border-color: rgba(9,105,218,0.15); font-weight: 600; }
+.struktur-item.settings-item { color: var(--text-muted); font-weight: 500; }
+.struktur-item.settings-item.active { background: var(--accent-light); color: var(--accent); }
+.struktur-item .item-num {
+    min-width: 24px; height: 22px; padding: 0 5px; border-radius: 5px;
+    font-size: 0.78em; font-weight: 700; display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted); line-height: 1;
+}
+.struktur-item.active .item-num { background: var(--accent); color: #fff; border-color: var(--accent); }
+.struktur-item .item-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.struktur-item .item-actions { display: none; align-items: center; gap: 2px; flex-shrink: 0; }
+.struktur-item:hover .item-actions, .struktur-item.active .item-actions { display: flex; }
+.struktur-item .item-actions button {
+    background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 3px;
+    border-radius: 3px; transition: all var(--transition); line-height: 1; display:inline-flex; align-items:center;
+}
+.struktur-item .item-actions button:hover { background: rgba(0,0,0,0.08); color: var(--text); }
+
+.panel-struktur-footer { padding: 12px 12px; border-top: 1px solid var(--border-light); flex-shrink: 0; }
+
+/* ============================================================
+   PANEL EDITOR (AREA UTAMA)
+   ============================================================ */
+.panel-editor { flex: 1; overflow-y: auto; padding: 32px 40px 80px; background: var(--bg); }
+.panel-editor::-webkit-scrollbar { width:6px; }
+.panel-editor::-webkit-scrollbar-track { background:transparent; }
+.panel-editor::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
+
+.editor-section { max-width: 840px; margin: 0 auto; animation: fadeIn 0.25s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+.editor-card {
+    background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 24px; margin-bottom: 20px; box-shadow: var(--shadow-sm);
+}
+.editor-card h2 { font-size: 1.15em; font-weight: 700; margin-bottom: 16px; color: var(--text-heading); display:flex; align-items:center; gap:10px; }
+
+/* Form */
+.form-group { margin-bottom: 14px; }
+.form-group label {
+    display: block; font-size: 0.82em; font-weight: 600; color: var(--text-muted);
+    margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.form-control {
+    width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: 6px;
+    font-size: 0.92em; font-family: inherit; background: var(--bg); color: var(--text);
+    outline: none; transition: border-color var(--transition), box-shadow var(--transition);
+}
+.form-control:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(9,105,218,0.12); }
+textarea.form-control { resize: vertical; min-height: 80px; line-height: 1.6; }
+textarea.form-control.code-textarea {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.85em; min-height: 120px;
+    background: #1e1e2e; color: #cdd6f4; border-color: #313244;
+}
+textarea.form-control.code-textarea:focus { border-color: var(--accent); }
+select.form-control {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23656d76' d='M2.5 4.5l3.5 3.5 3.5-3.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px;
+}
+.form-row { display: flex; gap: 12px; }
+.form-row .form-group { flex: 1; }
+
+/* ============================================================
+   BLOCK CARDS (EDITOR)
+   ============================================================ */
+.block-card {
+    background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius);
+    margin-bottom: 12px; overflow: hidden; transition: box-shadow var(--transition), border-color var(--transition);
+}
+.block-card:hover { box-shadow: var(--shadow-sm); border-color: #c0c6cc; }
+.block-card-header {
+    display: flex; align-items: center; gap: 8px; padding: 10px 14px;
+    background: var(--bg-card); border-bottom: 1px solid var(--border-light);
+    cursor: grab; font-size: 0.82em; font-weight: 600; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.5px;
+}
+.block-card-header .drag-handle { cursor: grab; color: var(--border); display:inline-flex; user-select: none; }
+.block-card-header .block-type-icon { display:inline-flex; color:var(--text-muted); }
+.block-card-header .block-type-label { flex: 1; }
+.block-card-header .block-actions { display: flex; align-items: center; gap: 2px; }
+.block-card-header .block-actions button {
+    background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 3px 5px;
+    border-radius: 4px; transition: all var(--transition); line-height: 1; display:inline-flex; align-items:center;
+}
+.block-card-header .block-actions button:hover { background: rgba(0,0,0,0.08); color: var(--text); }
+.block-card-header .block-actions button.delete-btn:hover { background: rgba(207,34,46,0.1); color: var(--accent-red); }
+.block-card-body { padding: 14px; }
+
+/* Step Items */
+.step-items { list-style: none; padding: 0; }
+.step-item { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.step-item .step-num {
+    min-width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: #fff;
+    font-size: 0.75em; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.step-item input { flex: 1; }
+.step-item button { flex-shrink: 0; }
+
+/* Table editor */
+.table-editor { width: 100%; overflow-x: auto; }
+.table-editor table { width: 100%; border-collapse: collapse; }
+.table-editor th, .table-editor td { border: 1px solid var(--border); padding: 0; }
+.table-editor th input, .table-editor td input {
+    width: 100%; border: none; padding: 8px 10px; font-family: inherit; font-size: 0.88em; background: transparent; outline: none;
+}
+.table-editor th input { font-weight: 600; background: var(--bg-card); }
+.table-editor th input:focus, .table-editor td input:focus { box-shadow: inset 0 0 0 2px var(--accent); }
+
+/* Add Block Toolbar */
+.add-block-toolbar {
+    display: flex; flex-wrap: wrap; gap: 8px; padding: 20px; background: var(--bg-card);
+    border: 2px dashed var(--border); border-radius: var(--radius-lg); justify-content: center; margin-top: 8px;
+}
+.add-block-btn {
+    display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px;
+    border-radius: 6px; font-size: 0.82em; font-weight: 600; font-family: inherit;
+    cursor: pointer; border: 1px solid var(--border); background: var(--bg-panel); color: var(--text);
+    transition: all var(--transition);
+}
+.add-block-btn:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent); transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+
+/* Text Formatting Toolbar */
+.fmt-toolbar {
+    display: flex; align-items: center; gap: 2px; padding: 6px 8px;
+    background: var(--bg-card); border: 1px solid var(--border); border-bottom: none;
+    border-radius: 6px 6px 0 0; flex-wrap: wrap;
+}
+.fmt-toolbar .fmt-sep { width: 1px; height: 20px; background: var(--border); margin: 0 4px; flex-shrink: 0; }
+.fmt-btn {
+    display: inline-flex; align-items: center; justify-content: center; min-width: 30px; height: 28px;
+    padding: 0 6px; border: none; border-radius: 4px; background: transparent; color: var(--text);
+    font-size: 0.85em; font-family: inherit; font-weight: 600; cursor: pointer;
+    transition: all var(--transition); line-height: 1; position: relative;
+}
+.fmt-btn:hover { background: var(--accent-light); color: var(--accent); }
+.fmt-btn:active { transform: scale(0.95); }
+.fmt-btn[title]:hover::after {
+    content: attr(title); position: absolute; bottom: calc(100% + 6px); left: 50%;
+    transform: translateX(-50%); background: var(--text); color: #fff; font-size: 0.72em;
+    font-weight: 500; padding: 3px 8px; border-radius: 4px; white-space: nowrap; pointer-events: none; z-index: 10;
+}
+.fmt-btn .fi { font-style: italic; }
+.fmt-btn .fu { text-decoration: underline; }
+.fmt-btn .fs { text-decoration: line-through; }
+.fmt-btn .fc { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; background: rgba(175,184,193,0.25); padding: 1px 4px; border-radius: 3px; }
+.fmt-toolbar + textarea.form-control { border-radius: 0 0 6px 6px; }
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+.empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+.empty-state .empty-icon { margin-bottom: 16px; opacity: 0.35; color: var(--text-muted); }
+.empty-state .empty-icon .icon { width:48px; height:48px; }
+.empty-state h3 { font-size: 1.1em; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.empty-state p { font-size: 0.88em; margin-bottom: 16px; }
+
+/* ============================================================
+   PREVIEW / TOAST / MODAL / RESPONSIVE
+   ============================================================ */
+.preview-overlay { position: fixed; inset: 0; z-index: 1000; background: #fff; display: none; flex-direction: column; }
+.preview-overlay.open { display: flex; }
+.preview-bar { height: 48px; background: var(--bg-panel); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; flex-shrink: 0; }
+.preview-bar-label { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.92em; color: var(--accent); }
+.preview-iframe { flex: 1; border: none; width: 100%; }
+
+.toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 2000; display: flex; flex-direction: column; gap: 8px; }
+.toast { background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 18px; font-size: 0.88em; font-weight: 500; box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 8px; animation: slideInRight 0.3s ease; min-width: 240px; }
+.toast.success { border-left: 4px solid var(--accent-green); }
+.toast.error { border-left: 4px solid var(--accent-red); }
+.toast.info { border-left: 4px solid var(--accent); }
+@keyframes slideInRight { from { transform:translateX(100%); opacity:0; } to { transform:translateX(0); opacity:1; } }
+
+.modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 3000; display: none; align-items: center; justify-content: center; }
+.modal-backdrop.open { display: flex; }
+.modal { background: var(--bg-panel); border-radius: var(--radius-lg); padding: 28px; max-width: 420px; width: 90%; box-shadow: var(--shadow-lg); animation: scaleIn 0.2s ease; }
+@keyframes scaleIn { from { transform:scale(0.95); opacity:0; } to { transform:scale(1); opacity:1; } }
+.modal h3 { font-size: 1.1em; margin-bottom: 8px; }
+.modal p { font-size: 0.92em; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
+
+.hidden-input { display: none; }
+
+@media (max-width: 768px) {
+    .panel-struktur { width: 220px; }
+    .panel-editor { padding: 20px 16px 60px; }
+    .toolbar-title { display: none; }
+}
+    </style>
+</head>
+<body>
+
+<!-- ======================== TOOLBAR ======================== -->
+<div class="toolbar">
+    <div class="toolbar-brand">
+        <span class="icon icon-lg"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 8h8M8 12h5M8 16h6"/></svg></span>
+        Tutorial Builder
+    </div>
+    <div class="toolbar-sep"></div>
+    <div class="toolbar-title" id="toolbar-title">Belum ada tutorial</div>
+    <div class="toolbar-actions">
+        <button class="btn btn-primary" onclick="openPreview()" title="Preview (Ctrl+P)">
+            <span class="icon"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span> Preview
+        </button>
+        <button class="btn btn-success" onclick="exportHTML()" title="Export HTML">
+            <span class="icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span> Export HTML
+        </button>
+        <button class="btn" onclick="exportJSON()" title="Export JSON">
+            <span class="icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span> JSON
+        </button>
+        <button class="btn" onclick="loadJSONClick()" title="Load JSON">
+            <span class="icon"><svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></span> Load
+        </button>
+    </div>
+</div>
+
+<!-- ======================== MAIN LAYOUT ======================== -->
+<div class="app-layout">
+    <div class="panel-struktur">
+        <div class="panel-struktur-header">
+            <h3>Struktur</h3>
+            <div class="struktur-item settings-item" id="settings-btn" onclick="selectSettings()">
+                <span class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+                <span class="item-title">Pengaturan Tutorial</span>
+            </div>
+        </div>
+        <div class="panel-struktur-list" id="module-list"></div>
+        <div class="panel-struktur-footer">
+            <button class="btn btn-primary" style="width:100%" onclick="addModule()">
+                <span class="icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span> Tambah Modul
+            </button>
+        </div>
+    </div>
+
+    <div class="panel-editor" id="editor-panel">
+        <div class="editor-section" id="editor-content"></div>
+    </div>
+</div>
+
+<!-- ======================== PREVIEW OVERLAY ======================== -->
+<div class="preview-overlay" id="preview-overlay">
+    <div class="preview-bar">
+        <span class="preview-bar-label">
+            <span class="icon"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span> Preview Mode
+        </span>
+        <button class="btn btn-sm" onclick="closePreview()">
+            <span class="icon"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span> Tutup
+        </button>
+    </div>
+    <iframe class="preview-iframe" id="preview-iframe"></iframe>
+</div>
+
+<!-- ======================== CONFIRM MODAL ======================== -->
+<div class="modal-backdrop" id="confirm-modal">
+    <div class="modal">
+        <h3 id="confirm-title">Konfirmasi</h3>
+        <p id="confirm-message">Apakah Anda yakin?</p>
+        <div class="modal-actions">
+            <button class="btn" onclick="closeConfirm()">Batal</button>
+            <button class="btn btn-danger" id="confirm-btn" onclick="confirmAction()">Hapus</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+<input type="file" class="hidden-input" id="json-input" accept=".json" onchange="handleLoadJSON(event)">
+
+<!-- ======================== JAVASCRIPT ======================== -->
+<script>
+// ============================================================
+// SVG ICON LIBRARY (Feather-style)
+// ============================================================
+const IC = {
+    // Structure
+    settings:   '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 0 1 0 4h-.09c-.658.003-1.25.396-1.51 1z"/></svg>',
+    barChart:   '<svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+    plus:       '<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+    // Block types
+    alignLeft:  '<svg viewBox="0 0 24 24"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>',
+    code:       '<svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>',
+    list:       '<svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>',
+    alertCircle:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+    grid:       '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>',
+    image:      '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>',
+    film:       '<svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/><line x1="17" y1="17" x2="22" y2="17"/></svg>',
+    minus:      '<svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+    // Actions
+    arrowUp:    '<svg viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>',
+    arrowDown:  '<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>',
+    trash:      '<svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+    gripVert:   '<svg viewBox="0 0 24 24"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg>',
+    link:       '<svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+    // Misc
+    x:          '<svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+    fileText:   '<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>',
+    book:       '<svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
+    layers:     '<svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>',
+    check:      '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>',
+    xCircle:    '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+    info:       '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
+    bold:       '<svg viewBox="0 0 24 24"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/></svg>',
+    italic:     '<svg viewBox="0 0 24 24"><line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/></svg>',
+    underline:  '<svg viewBox="0 0 24 24"><path d="M6 3v7a6 6 0 0 0 6 6 6 6 0 0 0 6-6V3"/><line x1="4" y1="21" x2="20" y2="21"/></svg>',
+    strike:     '<svg viewBox="0 0 24 24"><path d="M16 4H9a3 3 0 0 0-2.83 4"/><path d="M14 12a4 4 0 0 1 0 8H6"/><line x1="4" y1="12" x2="20" y2="12"/></svg>',
+    heading:    '<svg viewBox="0 0 24 24"><path d="M6 12h12"/><path d="M6 20V4"/><path d="M18 20V4"/></svg>',
+    cornerDownLeft: '<svg viewBox="0 0 24 24"><polyline points="9 10 4 15 9 20"/><path d="M20 4v7a4 4 0 0 1-4 4H4"/></svg>',
+};
+
+function icon(name, cls) {
+    return `<span class="icon ${cls||''}">${IC[name]||''}</span>`;
+}
+
+// ============================================================
+// DATA MODEL & STATE
+// ============================================================
+const STORAGE_KEY = 'tutorial-builder-data';
+
+function generateId() {
+    return 'id-' + Date.now().toString(36) + '-' + Math.random().toString(36).substr(2, 6);
+}
+
+function getDefaultState() {
+    return { title: 'Tutorial Lengkap: Judul Tutorial Anda', subtitle: 'Deskripsi singkat tutorial ini.', modules: [] };
+}
+
+function createModule(title, duration) {
+    return { id: generateId(), title: title || 'Modul Baru', duration: duration || '15 menit', blocks: [] };
+}
+
+function createBlock(type) {
+    const base = { id: generateId(), type };
+    switch (type) {
+        case 'paragraph': return { ...base, content: '' };
+        case 'code':      return { ...base, language: 'bash', label: 'Terminal', content: '' };
+        case 'steps':     return { ...base, items: ['Langkah pertama'] };
+        case 'alert':     return { ...base, variant: 'tip', content: '' };
+        case 'table':     return { ...base, headers: ['Kolom 1', 'Kolom 2'], rows: [['', '']] };
+        case 'separator': return { ...base };
+        case 'image':     return { ...base, url: '', caption: '' };
+        case 'embed':     return { ...base, url: '', caption: '' };
+        default: return base;
+    }
+}
+
+let state = loadState();
+let activeView = 'settings';
+let pendingConfirmFn = null;
+
+function loadState() {
+    try { const s = localStorage.getItem(STORAGE_KEY); if (s) return JSON.parse(s); } catch(e) {}
+    return getDefaultState();
+}
+function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); updateToolbarTitle(); }
+function updateToolbarTitle() { document.getElementById('toolbar-title').textContent = state.title || 'Tutorial Builder'; }
+
+// ============================================================
+// CRUD
+// ============================================================
+function addModule() {
+    const m = createModule('Modul ' + (state.modules.length+1) + ': Judul Modul');
+    state.modules.push(m); saveState(); activeView = m.id; renderAll();
+}
+function removeModule(id) {
+    showConfirm('Hapus Modul?', 'Modul beserta semua bloknya akan dihapus secara permanen.', () => {
+        state.modules = state.modules.filter(m => m.id !== id); saveState();
+        if (activeView === id) activeView = 'settings'; renderAll(); showToast('Modul berhasil dihapus', 'success');
+    });
+}
+function moveModule(id, dir) {
+    const idx = state.modules.findIndex(m => m.id === id); const ni = idx + dir;
+    if (ni < 0 || ni >= state.modules.length) return;
+    [state.modules[idx], state.modules[ni]] = [state.modules[ni], state.modules[idx]]; saveState(); renderAll();
+}
+function addBlock(moduleId, type) {
+    const mod = state.modules.find(m => m.id === moduleId); if (!mod) return;
+    mod.blocks.push(createBlock(type)); saveState(); renderEditor();
+    setTimeout(() => document.getElementById('editor-panel').scrollTop = document.getElementById('editor-panel').scrollHeight, 100);
+}
+function removeBlock(mid, bid) {
+    showConfirm('Hapus Blok?', 'Blok ini akan dihapus secara permanen.', () => {
+        const mod = state.modules.find(m => m.id === mid); if (!mod) return;
+        mod.blocks = mod.blocks.filter(b => b.id !== bid); saveState(); renderEditor(); showToast('Blok dihapus', 'success');
+    });
+}
+function moveBlock(mid, bid, dir) {
+    const mod = state.modules.find(m => m.id === mid); if (!mod) return;
+    const idx = mod.blocks.findIndex(b => b.id === bid); const ni = idx + dir;
+    if (ni < 0 || ni >= mod.blocks.length) return;
+    [mod.blocks[idx], mod.blocks[ni]] = [mod.blocks[ni], mod.blocks[idx]]; saveState(); renderEditor();
+}
+
+// ============================================================
+// RENDER — STRUKTUR
+// ============================================================
+function renderStructure() {
+    const list = document.getElementById('module-list');
+    const sb = document.getElementById('settings-btn');
+    sb.classList.toggle('active', activeView === 'settings');
+
+    let html = '';
+    state.modules.forEach((m, i) => {
+        const a = activeView === m.id;
+        html += `<div class="struktur-item ${a?'active':''}" onclick="selectModule('${m.id}')" draggable="true" ondragstart="handleModuleDragStart(event, '${m.id}')" ondragover="handleModuleDragOver(event)" ondrop="handleModuleDrop(event, '${m.id}')">
+            <span class="item-num">${i+1}</span>
+            <span class="item-title">${escHtml(m.title)}</span>
+            <span class="item-actions">
+                <button onclick="event.stopPropagation();moveModule('${m.id}',-1)" title="Naik" ${i===0?'disabled':''}>${icon('arrowUp')}</button>
+                <button onclick="event.stopPropagation();moveModule('${m.id}',1)" title="Turun" ${i===state.modules.length-1?'disabled':''}>${icon('arrowDown')}</button>
+                <button onclick="event.stopPropagation();removeModule('${m.id}')" title="Hapus" style="color:var(--accent-red)">${icon('trash')}</button>
+            </span>
+        </div>`;
+    });
+    list.innerHTML = html;
+}
+function selectSettings() { activeView = 'settings'; renderAll(); }
+function selectModule(id) { activeView = id; renderAll(); }
+
+// ============================================================
+// RENDER — EDITOR
+// ============================================================
+function renderEditor() {
+    const c = document.getElementById('editor-content');
+    if (activeView === 'settings') { c.innerHTML = renderSettingsEditor(); return; }
+
+    const mod = state.modules.find(m => m.id === activeView);
+    if (!mod) { c.innerHTML = renderEmptyState('fileText', 'Pilih Modul', 'Klik salah satu modul di sidebar kiri untuk mulai mengedit.'); return; }
+
+    const mi = state.modules.indexOf(mod) + 1;
+    let html = `<div class="editor-card">
+        <h2>${icon('book','icon-lg')} Modul ${mi}</h2>
+        <div class="form-row">
+            <div class="form-group"><label>Judul Modul</label>
+                <input type="text" class="form-control" value="${escAttr(mod.title)}" oninput="updateModule('${mod.id}','title',this.value)">
+            </div>
+            <div class="form-group" style="max-width:160px"><label>Durasi</label>
+                <input type="text" class="form-control" value="${escAttr(mod.duration)}" oninput="updateModule('${mod.id}','duration',this.value)">
+            </div>
+        </div>
+    </div>`;
+
+    if (mod.blocks.length === 0) {
+        html += renderEmptyState('layers', 'Belum Ada Blok', 'Tambahkan blok konten menggunakan tombol di bawah.');
+    } else {
+        mod.blocks.forEach((b, bi) => { html += renderBlockCard(mod.id, b, bi, mod.blocks.length); });
+    }
+
+    html += `<div class="add-block-toolbar">
+        <button class="add-block-btn" onclick="addBlock('${mod.id}','paragraph')">${icon('alignLeft')} Paragraf</button>
+        <button class="add-block-btn" onclick="addBlock('${mod.id}','code')">${icon('code')} Kode</button>
+        <button class="add-block-btn" onclick="addBlock('${mod.id}','alert')">${icon('alertCircle')} Alert</button>
+        <button class="add-block-btn" onclick="addBlock('${mod.id}','steps')">${icon('list')} Langkah</button>
+        <button class="add-block-btn" onclick="addBlock('${mod.id}','table')">${icon('grid')} Tabel</button>
+        <button class="add-block-btn" onclick="addBlock('${mod.id}','image')">${icon('image')} Gambar</button>
+        <button class="add-block-btn" onclick="addBlock('${mod.id}','embed')">${icon('film')} Embed</button>
+        <button class="add-block-btn" onclick="addBlock('${mod.id}','separator')">${icon('minus')} Pemisah</button>
+    </div>`;
+    c.innerHTML = html;
+}
+
+function renderSettingsEditor() {
+    return `<div class="editor-card">
+        <h2>${icon('settings','icon-lg')} Pengaturan Tutorial</h2>
+        <div class="form-group"><label>Judul Tutorial</label>
+            <input type="text" class="form-control" value="${escAttr(state.title)}" oninput="updateSettings('title',this.value)">
+        </div>
+        <div class="form-group"><label>Subtitle / Deskripsi</label>
+            <textarea class="form-control" rows="2" oninput="updateSettings('subtitle',this.value)">${escHtml(state.subtitle)}</textarea>
+        </div>
+    </div>
+    <div class="editor-card" style="border-left:4px solid var(--accent)">
+        <h2>${icon('barChart','icon-lg')} Statistik</h2>
+        <p style="color:var(--text-muted);font-size:0.92em">
+            <strong>${state.modules.length}</strong> modul &nbsp;·&nbsp;
+            <strong>${state.modules.reduce((s,m) => s+m.blocks.length, 0)}</strong> blok konten
+        </p>
+    </div>`;
+}
+
+function renderEmptyState(iconName, title, msg) {
+    return `<div class="empty-state">
+        <div class="empty-icon">${icon(iconName)}</div>
+        <h3>${title}</h3><p>${msg}</p>
+    </div>`;
+}
+
+// ============================================================
+// BLOCK CARD
+// ============================================================
+const BLOCK_META = {
+    paragraph:  { ic: 'alignLeft',   label: 'Paragraf' },
+    code:       { ic: 'code',        label: 'Kode' },
+    steps:      { ic: 'list',        label: 'Langkah' },
+    alert:      { ic: 'alertCircle', label: 'Alert' },
+    table:      { ic: 'grid',        label: 'Tabel' },
+    separator:  { ic: 'minus',       label: 'Pemisah' },
+    image:      { ic: 'image',       label: 'Gambar' },
+    embed:      { ic: 'film',        label: 'Embed' },
+};
+
+function renderBlockCard(mid, block, idx, total) {
+    const meta = BLOCK_META[block.type] || { ic:'info', label:'Unknown' };
+    const extra = block.type === 'code' ? ` (${block.language||'text'})` : block.type === 'alert' ? ` — ${block.variant||'tip'}` : '';
+
+    return `<div class="block-card" data-block-id="${block.id}" draggable="true" ondragstart="handleBlockDragStart(event, '${mid}', '${block.id}')" ondragover="handleBlockDragOver(event)" ondrop="handleBlockDrop(event, '${mid}', '${block.id}')">
+        <div class="block-card-header">
+            <span class="drag-handle">${icon('gripVert')}</span>
+            <span class="block-type-icon">${icon(meta.ic)}</span>
+            <span class="block-type-label">${meta.label}${extra}</span>
+            <span class="block-actions">
+                <button onclick="moveBlock('${mid}','${block.id}',-1)" ${idx===0?'disabled':''} title="Naik">${icon('arrowUp')}</button>
+                <button onclick="moveBlock('${mid}','${block.id}',1)" ${idx===total-1?'disabled':''} title="Turun">${icon('arrowDown')}</button>
+                <button class="delete-btn" onclick="removeBlock('${mid}','${block.id}')" title="Hapus">${icon('trash')}</button>
+            </span>
+        </div>
+        <div class="block-card-body">${renderBlockBody(mid, block)}</div>
+    </div>`;
+}
+
+function renderBlockBody(mid, block) {
+    const bid = block.id;
+    switch (block.type) {
+        case 'paragraph':
+            return `<div class="fmt-toolbar">
+                <button class="fmt-btn" onclick="insertFormat('${mid}','${bid}','bold')" title="Bold (Ctrl+B)">${icon('bold')}</button>
+                <button class="fmt-btn" onclick="insertFormat('${mid}','${bid}','italic')" title="Italic (Ctrl+I)">${icon('italic')}</button>
+                <button class="fmt-btn" onclick="insertFormat('${mid}','${bid}','underline')" title="Underline (Ctrl+U)">${icon('underline')}</button>
+                <button class="fmt-btn" onclick="insertFormat('${mid}','${bid}','strike')" title="Strikethrough">${icon('strike')}</button>
+                <span class="fmt-sep"></span>
+                <button class="fmt-btn" onclick="insertFormat('${mid}','${bid}','code')" title="Inline Code">${icon('code')}</button>
+                <button class="fmt-btn" onclick="insertFormat('${mid}','${bid}','link')" title="Link">${icon('link')}</button>
+                <span class="fmt-sep"></span>
+                <button class="fmt-btn" onclick="insertFormat('${mid}','${bid}','h4')" title="Sub-heading">${icon('heading')}</button>
+                <button class="fmt-btn" onclick="insertFormat('${mid}','${bid}','br')" title="Line Break">${icon('cornerDownLeft')}</button>
+            </div>
+            <textarea class="form-control" id="ta-${bid}" placeholder="Tulis paragraf..." oninput="updateBlock('${mid}','${bid}','content',this.value)">${escHtml(block.content||'')}</textarea>`;
+
+        case 'code':
+            return `<div class="form-row">
+                <div class="form-group"><label>Bahasa</label>
+                    <select class="form-control" onchange="updateBlock('${mid}','${bid}','language',this.value)">
+                        ${['bash','php','html','ini','javascript','css','json','xml','sql','text'].map(l => `<option value="${l}" ${block.language===l?'selected':''}>${l}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="form-group"><label>Label (opsional)</label>
+                    <input type="text" class="form-control" value="${escAttr(block.label||'')}" placeholder="mis: Terminal" oninput="updateBlock('${mid}','${bid}','label',this.value)">
+                </div>
+            </div>
+            <div class="form-group"><label>Kode</label>
+                <textarea class="form-control code-textarea" rows="6" placeholder="Tulis kode..." oninput="updateBlock('${mid}','${bid}','content',this.value)">${escHtml(block.content||'')}</textarea>
+            </div>`;
+
+        case 'steps': {
+            const items = block.items || [];
+            let h = '<div class="step-items">';
+            items.forEach((item, si) => {
+                h += `<div class="step-item"><span class="step-num">${si+1}</span>
+                    <input type="text" class="form-control" value="${escAttr(item)}" oninput="updateStepItem('${mid}','${bid}',${si},this.value)">
+                    <button class="btn btn-sm btn-danger btn-icon" onclick="removeStepItem('${mid}','${bid}',${si})" title="Hapus">${icon('x')}</button>
+                </div>`;
+            });
+            h += `</div><button class="btn btn-sm" onclick="addStepItem('${mid}','${bid}')" style="margin-top:6px">${icon('plus')} Tambah Langkah</button>`;
+            return h;
+        }
+
+        case 'alert':
+            return `<div class="form-group"><label>Jenis Alert</label>
+                <select class="form-control" onchange="updateBlock('${mid}','${bid}','variant',this.value)">
+                    <option value="tip" ${block.variant==='tip'?'selected':''}>Tip (Hijau)</option>
+                    <option value="note" ${block.variant==='note'?'selected':''}>Note (Kuning)</option>
+                    <option value="important" ${block.variant==='important'?'selected':''}>Important (Merah)</option>
+                    <option value="warning" ${block.variant==='warning'?'selected':''}>Warning (Kuning)</option>
+                </select>
+            </div>
+            <div class="form-group"><label>Konten</label>
+                <textarea class="form-control" rows="3" placeholder="Isi alert..." oninput="updateBlock('${mid}','${bid}','content',this.value)">${escHtml(block.content||'')}</textarea>
+            </div>`;
+
+        case 'table': return renderTableEditor(mid, bid, block);
+
+        case 'separator':
+            return `<div style="text-align:center;color:var(--text-muted);font-size:0.85em;padding:8px 0">— Garis Pemisah (hr) —</div>`;
+
+        case 'image':
+            return `<div class="form-group"><label>URL Gambar</label>
+                <input type="text" class="form-control" value="${escAttr(block.url||'')}" placeholder="https://..." oninput="updateBlock('${mid}','${bid}','url',this.value)">
+            </div>
+            <div class="form-group"><label>Caption (opsional)</label>
+                <input type="text" class="form-control" value="${escAttr(block.caption||'')}" placeholder="Keterangan gambar" oninput="updateBlock('${mid}','${bid}','caption',this.value)">
+            </div>
+            ${block.url ? `<img src="${escAttr(block.url)}" style="max-width:100%;border-radius:6px;margin-top:8px;border:1px solid var(--border)" onerror="this.style.display='none'">` : ''}`;
+
+        case 'embed':
+            return `<div class="form-group"><label>URL Embed (YouTube, dll)</label>
+                <input type="text" class="form-control" value="${escAttr(block.url||'')}" placeholder="https://www.youtube.com/embed/..." oninput="updateBlock('${mid}','${bid}','url',this.value)">
+            </div>
+            <div class="form-group"><label>Caption (opsional)</label>
+                <input type="text" class="form-control" value="${escAttr(block.caption||'')}" placeholder="Keterangan" oninput="updateBlock('${mid}','${bid}','caption',this.value)">
+            </div>`;
+
+        default: return '<p style="color:var(--text-muted)">Tipe blok tidak dikenali.</p>';
+    }
+}
+
+function renderTableEditor(mid, bid, block) {
+    const headers = block.headers || ['Kolom 1'];
+    const rows = block.rows || [];
+    const cols = headers.length;
+    let h = '<div class="table-editor"><table><thead><tr>';
+    headers.forEach((hd, ci) => { h += `<th><input type="text" value="${escAttr(hd)}" oninput="updateTableHeader('${mid}','${bid}',${ci},this.value)"></th>`; });
+    h += '</tr></thead><tbody>';
+    rows.forEach((row, ri) => {
+        h += '<tr>';
+        for (let ci = 0; ci < cols; ci++) { h += `<td><input type="text" value="${escAttr(row[ci]||'')}" oninput="updateTableCell('${mid}','${bid}',${ri},${ci},this.value)"></td>`; }
+        h += `<td style="border:none;padding:2px"><button class="btn btn-sm btn-icon btn-danger" onclick="removeTableRow('${mid}','${bid}',${ri})" title="Hapus baris">${icon('x')}</button></td></tr>`;
+    });
+    h += '</tbody></table></div>';
+    h += `<div style="display:flex;gap:6px;margin-top:8px">
+        <button class="btn btn-sm" onclick="addTableRow('${mid}','${bid}')">${icon('plus')} Baris</button>
+        <button class="btn btn-sm" onclick="addTableCol('${mid}','${bid}')">${icon('plus')} Kolom</button>
+        ${cols > 1 ? `<button class="btn btn-sm btn-danger" onclick="removeTableCol('${mid}','${bid}')">${icon('minus')} Kolom</button>` : ''}
+    </div>`;
+    return h;
+}
+
+// ============================================================
+// UPDATE HANDLERS
+// ============================================================
+function updateSettings(k, v) { state[k] = v; saveState(); }
+function updateModule(mid, k, v) { const m = state.modules.find(x => x.id === mid); if (m) { m[k] = v; saveState(); renderStructure(); } }
+function updateBlock(mid, bid, k, v) { const m = state.modules.find(x => x.id === mid); if (!m) return; const b = m.blocks.find(x => x.id === bid); if (b) { b[k] = v; saveState(); } }
+function updateStepItem(mid, bid, idx, v) { const b = getBlock(mid, bid); if (b && b.items) { b.items[idx] = v; saveState(); } }
+function addStepItem(mid, bid) { const b = getBlock(mid, bid); if (b) { b.items = b.items || []; b.items.push(''); saveState(); renderEditor(); } }
+function removeStepItem(mid, bid, idx) { const b = getBlock(mid, bid); if (b && b.items) { b.items.splice(idx, 1); saveState(); renderEditor(); } }
+function updateTableHeader(mid, bid, ci, v) { const b = getBlock(mid, bid); if (b) { b.headers[ci] = v; saveState(); } }
+function updateTableCell(mid, bid, ri, ci, v) { const b = getBlock(mid, bid); if (b && b.rows[ri]) { b.rows[ri][ci] = v; saveState(); } }
+function addTableRow(mid, bid) { const b = getBlock(mid, bid); if (b) { b.rows.push(new Array(b.headers.length).fill('')); saveState(); renderEditor(); } }
+function removeTableRow(mid, bid, ri) { const b = getBlock(mid, bid); if (b) { b.rows.splice(ri, 1); saveState(); renderEditor(); } }
+function addTableCol(mid, bid) { const b = getBlock(mid, bid); if (b) { b.headers.push('Kolom '+(b.headers.length+1)); b.rows.forEach(r => r.push('')); saveState(); renderEditor(); } }
+function removeTableCol(mid, bid) { const b = getBlock(mid, bid); if (b && b.headers.length > 1) { b.headers.pop(); b.rows.forEach(r => r.pop()); saveState(); renderEditor(); } }
+function getBlock(mid, bid) { const m = state.modules.find(x => x.id === mid); return m ? m.blocks.find(x => x.id === bid) : null; }
+
+// Format insertion for paragraph textarea
+function insertFormat(mid, bid, format) {
+    const ta = document.getElementById('ta-' + bid);
+    if (!ta) return;
+    ta.focus();
+    const start = ta.selectionStart, end = ta.selectionEnd;
+    const selected = ta.value.substring(start, end);
+    let before = '', after = '', insert = '';
+
+    switch (format) {
+        case 'bold':      before = '**'; after = '**'; break;
+        case 'italic':    before = '*'; after = '*'; break;
+        case 'underline': before = '__'; after = '__'; break;
+        case 'strike':    before = '~~'; after = '~~'; break;
+        case 'code':      before = '`'; after = '`'; break;
+        case 'link':
+            const url = prompt('Masukkan URL:', 'https://');
+            if (!url) return;
+            before = '['; after = '](' + url + ')'; break;
+        case 'h4':  before = '#### '; after = ''; break;
+        case 'br':  insert = '\n'; break;
+        default: return;
+    }
+
+    let newText, cursorPos;
+    if (insert) {
+        newText = ta.value.substring(0, start) + insert + ta.value.substring(end);
+        cursorPos = start + insert.length;
+    } else if (selected) {
+        newText = ta.value.substring(0, start) + before + selected + after + ta.value.substring(end);
+        cursorPos = start + before.length + selected.length + after.length;
+    } else {
+        const ph = format === 'link' ? 'teks link' : format === 'h4' ? 'Sub-heading' : 'teks';
+        newText = ta.value.substring(0, start) + before + ph + after + ta.value.substring(end);
+        cursorPos = start + before.length;
+        setTimeout(() => { ta.selectionStart = start + before.length; ta.selectionEnd = start + before.length + ph.length; }, 0);
+    }
+    ta.value = newText;
+    ta.selectionStart = ta.selectionEnd = cursorPos;
+    updateBlock(mid, bid, 'content', ta.value);
+}
+
+// ============================================================
+// DRAG AND DROP HANDLERS
+// ============================================================
+let draggedId = null;
+let draggedModuleId = null;
+
+function handleModuleDragStart(e, id) {
+    draggedId = id;
+    e.dataTransfer.effectAllowed = 'move';
+    e.target.style.opacity = '0.5';
+}
+
+function handleModuleDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+}
+
+function handleModuleDrop(e, targetId) {
+    e.preventDefault();
+    e.target.style.opacity = '1';
+    if (draggedId === targetId) return;
+
+    const fromIdx = state.modules.findIndex(m => m.id === draggedId);
+    const toIdx = state.modules.findIndex(m => m.id === targetId);
+    if (fromIdx === -1 || toIdx === -1) return;
+
+    const [moved] = state.modules.splice(fromIdx, 1);
+    state.modules.splice(toIdx, 0, moved);
+
+    saveState();
+    renderAll();
+}
+
+function handleBlockDragStart(e, mid, bid) {
+    draggedId = bid;
+    draggedModuleId = mid;
+    e.dataTransfer.effectAllowed = 'move';
+    e.target.style.opacity = '0.5';
+}
+
+function handleBlockDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+}
+
+function handleBlockDrop(e, mid, targetId) {
+    e.preventDefault();
+    e.target.style.opacity = '1';
+    if (draggedId === targetId || mid !== draggedModuleId) return;
+
+    const mod = state.modules.find(m => m.id === mid);
+    if (!mod) return;
+
+    const fromIdx = mod.blocks.findIndex(b => b.id === draggedId);
+    const toIdx = mod.blocks.findIndex(b => b.id === targetId);
+    if (fromIdx === -1 || toIdx === -1) return;
+
+    const [moved] = mod.blocks.splice(fromIdx, 1);
+    mod.blocks.splice(toIdx, 0, moved);
+
+    saveState();
+    renderEditor();
+}
+
+document.addEventListener('dragend', (e) => {
+    if (e.target.style) e.target.style.opacity = '1';
+    draggedId = null;
+    draggedModuleId = null;
+});
+
+document.addEventListener('keydown', function(e) {
+    const ta = e.target;
+    if (ta.tagName !== 'TEXTAREA' || !ta.id || !ta.id.startsWith('ta-')) return;
+    const bid = ta.id.replace('ta-', '');
+    let mid = null;
+    for (const mod of state.modules) { if (mod.blocks.find(b => b.id === bid)) { mid = mod.id; break; } }
+    if (!mid) return;
+    if (e.ctrlKey && e.key === 'b') { e.preventDefault(); insertFormat(mid, bid, 'bold'); }
+    else if (e.ctrlKey && e.key === 'i') { e.preventDefault(); insertFormat(mid, bid, 'italic'); }
+    else if (e.ctrlKey && e.key === 'u') { e.preventDefault(); insertFormat(mid, bid, 'underline'); }
+}, true);
+
+// ============================================================
+// RENDER ALL
+// ============================================================
+function renderAll() { renderStructure(); renderEditor(); updateToolbarTitle(); }
+
+// ============================================================
+// PREVIEW & EXPORT HTML
+// ============================================================
+function openPreview() {
+    const iframe = document.getElementById('preview-iframe');
+    iframe.srcdoc = generateFullHTML();
+    document.getElementById('preview-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+function closePreview() {
+    document.getElementById('preview-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+function generateFullHTML() {
+    const mc = state.modules.length;
+    let modulesHtml = '';
+    state.modules.forEach((mod, i) => {
+        modulesHtml += '\n<hr />\n\n';
+        modulesHtml += `<h3 id="modul-${i+1}" class="modul-heading">
+            <span class="modul-badge">${i+1}</span>
+            <span class="modul-heading-title">${escHtml(mod.title.replace(/^Modul \d+:\s*/, ''))}</span>
+        </h3>\n`;
+        mod.blocks.forEach(block => { modulesHtml += blockToHTML(block); });
+    });
+
+    let durationTable = '';
+    if (mc > 0) {
+        durationTable = '<h2>Daftar Modul Tutorial</h2>\n<table>\n<thead><tr><th>Modul</th><th>Judul</th><th>Durasi Est.</th></tr></thead>\n<tbody>\n';
+        state.modules.forEach((m, i) => {
+            durationTable += '<tr><td>' + (i+1) + '</td><td>' + escHtml(m.title.replace(/^Modul \d+:\s*/, '')) + '</td><td>' + escHtml(m.duration) + '</td></tr>\n';
+        });
+        durationTable += '</tbody>\n</table>';
+    }
+
+
+    var htmlHead = '<!doctype html>\n<html lang="id">\n<head>\n'
+        + '    <meta charset="UTF-8" />\n'
+        + '    <meta name="viewport" content="width=device-width, initial-scale=1.0" />\n'
+        + '    <title>' + escHtml(state.title) + '</title>\n'
+        + '    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" />\n'
+        + '    <link rel="preconnect" href="https://fonts.googleapis.com" />\n'
+        + '    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />\n'
+        + '    <style>' + getTutorialCSS() + '</style>\n'
+        + '</head>\n<body>\n';
+
+    var htmlSidebar = '    <div class="sidebar">\n'
+        + '        <div class="sidebar-header">\n'
+        + '            <div class="sidebar-brand">Daftar Modul</div>\n'
+        + '            <div class="sidebar-subtitle">' + escHtml(state.subtitle) + ' \u2014 ' + mc + ' modul</div>\n'
+        + '        </div>\n'
+        + '        <div class="sidebar-search">\n'
+        + '            <span class="sidebar-search-icon">&#x1F50D;</span>\n'
+        + '            <input type="text" id="sidebar-filter" placeholder="Cari modul..." autocomplete="off" />\n'
+        + '        </div>\n'
+        + '        <div class="sidebar-divider"></div>\n'
+        + '        <div class="sidebar-menu-wrap"><ul class="sidebar-menu" id="toc-menu"></ul></div>\n'
+        + '        <div class="sidebar-progress">\n'
+        + '            <span id="progress-label">0%</span>\n'
+        + '            <div class="sidebar-progress-bar"><div class="sidebar-progress-fill" id="progress-fill"></div></div>\n'
+        + '        </div>\n'
+        + '    </div>\n\n';
+
+    var htmlMain = '    <button class="toc-btn" onclick="window.scrollTo({top:0})" title="Ke Atas">&uarr;</button>\n\n'
+        + '    <div class="main-content">\n        <div class="container">\n'
+        + '            <h1>' + escHtml(state.title) + '</h1>\n'
+        + '            <blockquote class="tip"><p>' + escHtml(state.subtitle) + '</p></blockquote>\n'
+        + '            ' + durationTable + '\n'
+        + '            <h2>Detail Per Modul</h2>\n'
+        + '            ' + modulesHtml + '\n'
+        + '            <br /><br />\n'
+        + '            <p style="text-align:center;color:var(--text-muted);font-size:0.85em">\n'
+        + '                \u2014 Selesai \u2014 ' + escHtml(state.title) + ' &copy; ' + new Date().getFullYear() + ' \u2014\n'
+        + '            </p>\n'
+        + '        </div>\n'
+        + '    </div>\n\n';
+
+    // Build script tags via concat to prevent premature script termination
+    var sc = '<' + 'scri' + 'pt';
+    var sce = '</' + 'scri' + 'pt>';
+    var htmlScripts = '    ' + sc + ' src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js">' + sce + '\n'
+        + '    ' + sc + ' src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/php.min.js">' + sce + '\n'
+        + '    ' + sc + ' src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js">' + sce + '\n'
+        + '    ' + sc + ' src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/ini.min.js">' + sce + '\n'
+        + '    ' + sc + ' src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/xml.min.js">' + sce + '\n'
+        + '    ' + sc + '>' + getTutorialJS() + sce + '\n';
+
+    return htmlHead + htmlSidebar + htmlMain + htmlScripts + '</body>\n</html>';
+}
+
+function blockToHTML(block) {
+    switch (block.type) {
+        case 'paragraph':
+            return '<p>' + formatInlineMarkdown(block.content||'') + '</p>\n';
+        case 'code': {
+            const lbl = block.label ? '<span class="code-label">' + escHtml(block.label) + '</span>' : '';
+            return '<pre>' + lbl + '<code class="language-' + escAttr(block.language||'text') + '">' + escHtml(block.content||'') + '</code></pre>\n';
+        }
+        case 'steps':
+            if (!block.items || block.items.length === 0) return '';
+            return '<ol>\n' + block.items.map(item => '    <li>' + formatInlineMarkdown(item) + '</li>').join('\n') + '\n</ol>\n';
+        case 'alert': {
+            const v = block.variant || 'tip';
+            const ic = { tip:'&#x1F4A1; TIP', note:'&#x2139;&#xFE0F; NOTE', important:'&#x2757; IMPORTANT', warning:'&#x26A0;&#xFE0F; WARNING' };
+            return '<blockquote class="' + v + '">\n    <p class="alert-title">' + (ic[v]||v) + '</p>\n    <p>' + formatInlineMarkdown(block.content||'') + '</p>\n</blockquote>\n';
+        }
+        case 'table': {
+            const headers = block.headers || [];
+            const rows = block.rows || [];
+            let h = '<table>\n<thead><tr>';
+            headers.forEach(hd => { h += '<th>' + escHtml(hd) + '</th>'; });
+            h += '</tr></thead>\n<tbody>\n';
+            rows.forEach(row => {
+                h += '<tr>';
+                for (let ci = 0; ci < headers.length; ci++) { h += '<td>' + formatInlineMarkdown(row[ci]||'') + '</td>'; }
+                h += '</tr>\n';
+            });
+            return h + '</tbody>\n</table>\n';
+        }
+        case 'separator': return '<hr />\n';
+        case 'image':
+            if (!block.url) return '';
+            return '<p style="text-align:center"><img src="' + escAttr(block.url) + '" alt="' + escAttr(block.caption||'') + '" style="max-width:100%;border-radius:8px;border:1px solid #d8dee4"></p>\n' +
+                   (block.caption ? '<p style="text-align:center;color:#656d76;font-size:0.85em;margin-top:-8px">' + escHtml(block.caption) + '</p>\n' : '');
+        case 'embed':
+            if (!block.url) return '';
+            return '<div style="text-align:center;margin:16px 0"><iframe width="100%" height="400" src="' + escAttr(block.url) + '" frameborder="0" allowfullscreen style="border-radius:8px;border:1px solid #d8dee4;max-width:720px"></iframe></div>\n' +
+                   (block.caption ? '<p style="text-align:center;color:#656d76;font-size:0.85em">' + escHtml(block.caption) + '</p>\n' : '');
+        default: return '';
+    }
+}
+
+function formatInlineMarkdown(text) {
+    if (!text) return '';
+    let r = escHtml(text);
+    // Bold
+    r = r.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    // Italic (compatible regex without lookbehind)
+    r = r.replace(/(\s|^)\*([^*]+)\*(\s|$)/g, '$1<em>$2</em>$3');
+    // Underline & Strike
+    r = r.replace(/__(.*?)__/g, '<u>$1</u>');
+    r = r.replace(/~~(.*?)~~/g, '<s>$1</s>');
+    // Inline Code
+    r = r.replace(/`([^`]+)`/g, '<code>$1</code>');
+    // Links (handling URLs with parentheses)
+    r = r.replace(/\[([^\]]+)\]\(([^\s)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+    // Subheadings - split paragraph if needed
+    r = r.replace(/^#### (.+)$/gm, '<h4>$1</h4>');
+    return r;
+}
+
+// ============================================================
+// TUTORIAL CSS (for export — identical to tutorial.html)
+// ============================================================
+function getTutorialCSS() {
+    return ':root{--bg:#ffffff;--bg-card:#f6f8fa;--bg-code:#f0f2f5;--border:#d8dee4;--text:#1f2328;--text-muted:#656d76;--text-heading:#1f2328;--accent:#0969da;--accent-green:#1a7f37;--accent-yellow:#9a6700;--accent-red:#cf222e;--accent-purple:#8250df;--accent-orange:#bc4c00;--link:#0969da;--radius:8px}*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{font-family:"Inter",-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:15px;display:flex;margin:0}.sidebar{width:300px;height:100vh;position:sticky;top:0;overflow-y:auto;background:#fff;border-right:1px solid var(--border);padding:0;z-index:100;display:flex;flex-direction:column}.sidebar::-webkit-scrollbar{width:4px}.sidebar::-webkit-scrollbar-track{background:transparent}.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}.sidebar::-webkit-scrollbar-thumb:hover{background:var(--text-muted)}.sidebar-header{padding:20px 20px 0;flex-shrink:0}.sidebar-brand{font-size:1.05em;font-weight:800;color:var(--text-heading);margin-bottom:2px;display:flex;align-items:center;gap:8px;letter-spacing:-.3px}.sidebar-subtitle{font-size:.78em;color:var(--text-muted);font-weight:400;margin-bottom:16px}.sidebar-search{position:relative;margin-bottom:12px;padding:0 20px;flex-shrink:0}.sidebar-search input{width:100%;padding:8px 12px 8px 32px;border:1px solid var(--border);border-radius:6px;font-size:.82em;font-family:inherit;background:var(--bg-card);color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s}.sidebar-search input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(9,105,218,.12)}.sidebar-search input::placeholder{color:var(--text-muted)}.sidebar-search-icon{position:absolute;left:30px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:.82em;pointer-events:none}.sidebar-divider{height:1px;background:var(--border);margin:0 20px 8px;flex-shrink:0}.sidebar-menu-wrap{flex:1;overflow-y:auto;padding:4px 12px 20px}.sidebar-menu-wrap::-webkit-scrollbar{width:4px}.sidebar-menu-wrap::-webkit-scrollbar-track{background:transparent}.sidebar-menu-wrap::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}.sidebar-menu{list-style:none;padding:0;margin:0}.sidebar-menu li{margin-bottom:1px}.sidebar-menu a{display:flex;align-items:baseline;gap:10px;padding:8px 10px;color:var(--text-muted);text-decoration:none;border-radius:6px;font-size:.84em;font-weight:500;transition:all .15s ease;line-height:1.45;border:1px solid transparent}.sidebar-menu a:hover{background:var(--bg-card);color:var(--text-heading);text-decoration:none}.sidebar-menu a.active{background:rgba(9,105,218,.07);color:var(--accent);font-weight:600;border-color:rgba(9,105,218,.15)}.sidebar-menu .modul-num{background:var(--bg-card);color:var(--text-muted);min-width:26px;height:22px;padding:0 6px;border-radius:5px;font-size:.8em;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid var(--border);line-height:1}.sidebar-menu a:hover .modul-num{background:#eef1f5;color:var(--text-heading)}.sidebar-menu a.active .modul-num{background:var(--accent);color:#fff;border-color:var(--accent)}.sidebar-menu .modul-title{flex:1;min-width:0}.sidebar-progress{flex-shrink:0;padding:12px 20px;border-top:1px solid var(--border);font-size:.75em;color:var(--text-muted);display:flex;align-items:center;gap:8px}.sidebar-progress-bar{flex:1;height:3px;background:var(--border);border-radius:3px;overflow:hidden}.sidebar-progress-fill{height:100%;background:var(--accent);border-radius:3px;width:0%;transition:width .3s ease}.main-content{width:calc(100% - 300px);min-height:100vh;background:var(--bg)}.container{max-width:900px;margin:0 auto;padding:40px 48px 80px}.step-list{list-style:none;counter-reset:custom-step;padding-left:0;margin-top:24px}.step-list>li{position:relative;padding-left:52px;margin-bottom:24px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding-top:18px;padding-bottom:18px;padding-right:20px}.step-list>li::before{content:counter(custom-step);counter-increment:custom-step;position:absolute;left:-16px;top:16px;background:var(--accent);color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;box-shadow:0 0 0 4px var(--bg)}h1{font-size:2.2em;font-weight:800;color:var(--text-heading);margin-bottom:8px;border-bottom:1px solid var(--border);padding-bottom:16px}h2{font-size:1.6em;font-weight:700;color:var(--text-heading);margin-top:48px;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border)}h3{font-size:1.3em;font-weight:700;color:var(--text-heading);margin-top:36px;margin-bottom:12px}h3.modul-heading{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#f0f7ff 0%,#f6f8fa 100%);border:1px solid #d0e3f7;border-left:4px solid var(--accent);border-radius:var(--radius);padding:16px 20px;margin-top:48px;margin-bottom:20px;font-size:1.15em;position:relative}h3.modul-heading .modul-badge{display:inline-flex;align-items:center;justify-content:center;background:var(--accent);color:#fff;min-width:36px;height:36px;border-radius:50%;font-size:.82em;font-weight:800;flex-shrink:0;box-shadow:0 2px 6px rgba(9,105,218,.25);letter-spacing:-.3px}h3.modul-heading .modul-heading-title{flex:1;min-width:0;line-height:1.35}h4{font-size:1.05em;font-weight:600;color:var(--text-heading);margin-top:24px;margin-bottom:8px}p{margin-bottom:16px}strong{color:var(--text-heading);font-weight:600}a{color:var(--link);text-decoration:none}a:hover{text-decoration:underline}ul,ol{margin-bottom:16px;padding-left:28px}li{margin-bottom:4px}li code{background:rgba(175,184,193,.2);padding:2px 6px;border-radius:4px;font-family:"JetBrains Mono",monospace;font-size:.88em;color:var(--accent)}blockquote{margin:16px 0;padding:14px 16px;border-radius:var(--radius);font-size:.92em;line-height:1.6;border:1px solid transparent}blockquote p{margin-bottom:4px}blockquote p:last-child{margin-bottom:0}blockquote code{background:rgba(175,184,193,.2);padding:2px 6px;border-radius:4px;font-family:"JetBrains Mono",monospace;font-size:.88em}blockquote ol,blockquote ul{list-style:revert;counter-reset:none;padding-left:28px}blockquote ol>li,blockquote ul>li{position:static;padding:0;margin-bottom:4px;background:none;border:none;border-radius:0}blockquote ol>li::before,blockquote ul>li::before{content:none}.note{background:#fffbeb;border-color:#f3d98b;border-left:4px solid var(--accent-yellow)}.note .alert-title{color:var(--accent-yellow)}.tip{background:#eefbf0;border-color:#b8e6c0;border-left:4px solid var(--accent-green)}.tip .alert-title{color:var(--accent-green)}.important{background:#fef2f2;border-color:#f5c6c6;border-left:4px solid var(--accent-red)}.important .alert-title{color:var(--accent-red)}.warning{background:#fff8eb;border-color:#eed8a0;border-left:4px solid var(--accent-yellow)}.warning .alert-title{color:var(--accent-yellow)}.alert-title{font-weight:700;display:flex;align-items:center;gap:6px;margin-bottom:6px;font-size:.88em;text-transform:uppercase;letter-spacing:.5px}pre{margin:16px 0;border-radius:var(--radius);overflow-x:auto;border:1px solid var(--border);position:relative}pre code{font-family:"JetBrains Mono",monospace;font-size:.85em;line-height:1.6}code:not(pre code){background:rgba(175,184,193,.2);padding:2px 6px;border-radius:4px;font-family:"JetBrains Mono",monospace;font-size:.88em;color:var(--accent)}.code-label{position:absolute;top:0;right:0;background:rgba(175,184,193,.3);color:var(--text-muted);font-size:.7em;padding:4px 10px;border-radius:0 var(--radius) 0 var(--radius);font-family:"JetBrains Mono",monospace;text-transform:uppercase;letter-spacing:1px}table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.9em}th{background:var(--bg-card);color:var(--text-heading);font-weight:600;text-align:left;padding:10px 14px;border:1px solid var(--border)}td{padding:8px 14px;border:1px solid var(--border);vertical-align:top}tr:nth-child(even) td{background:#f6f8fa}td code{background:rgba(175,184,193,.2);padding:1px 5px;border-radius:3px;font-family:"JetBrains Mono",monospace;font-size:.88em;color:var(--accent-orange)}hr{border:none;border-top:1px solid var(--border);margin:36px 0}.toc-btn{position:fixed;bottom:24px;right:24px;width:48px;height:48px;background:var(--accent);color:#fff;border:none;border-radius:50%;font-size:1.2em;cursor:pointer;z-index:999;box-shadow:0 4px 12px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;transition:transform .2s}.toc-btn:hover{transform:scale(1.1)}@media print{body{background:#fff;color:#000}pre{border-color:#ccc}th{background:#f0f0f0}}@media(max-width:1024px){.sidebar{display:none}.main-content{width:100%}.sidebar-progress{display:none}}@media(max-width:640px){.container{padding:20px 16px 60px}h1{font-size:1.6em}h2{font-size:1.3em}table{font-size:.8em}td,th{padding:6px 8px}.step-list>li{padding:16px 16px 16px 40px;margin-left:16px}.step-list>li::before{left:-20px;width:28px;height:28px;font-size:12px}}';
+}
+
+function getTutorialJS() {
+    return "hljs.highlightAll();" +
+    "document.addEventListener('DOMContentLoaded',function(){" +
+    "var headings=document.querySelectorAll('h3');" +
+    "var menu=document.getElementById('toc-menu');" +
+    "var index=1;" +
+    "headings.forEach(function(h3){" +
+    "if(h3.innerText.indexOf('Modul')!==-1){" +
+    "var id='modul-'+index;h3.id=id;" +
+    "var textParts=h3.innerText.split(':');" +
+    "var numStr=textParts[0].replace('Modul ','').trim();" +
+    "var title=textParts[1]?textParts[1].trim():h3.innerText;" +
+    "var li=document.createElement('li');" +
+    "li.innerHTML='<a href=\\x22#'+id+'\\x22><span class=\\x22modul-num\\x22>'+numStr+'</span><span class=\\x22modul-title\\x22>'+title+'</span></a>';" +
+    "menu.appendChild(li);" +
+    "h3.classList.add('modul-heading');" +
+    "h3.innerHTML='<span class=\\x22modul-badge\\x22>'+numStr+'</span><span class=\\x22modul-heading-title\\x22>'+title+'</span>';" +
+    "index++;h3.style.scrollMarginTop='40px'" +
+    "}});" +
+    "document.querySelectorAll('.container ol').forEach(function(ol){" +
+    "if(!ol.closest('blockquote')){ol.classList.add('step-list')}" +
+    "});" +
+    "var filterInput=document.getElementById('sidebar-filter');" +
+    "if(filterInput){filterInput.addEventListener('input',function(e){" +
+    "var query=e.target.value.toLowerCase();" +
+    "document.querySelectorAll('.sidebar-menu li').forEach(function(li){" +
+    "li.style.display=li.textContent.toLowerCase().indexOf(query)!==-1?'':'none'" +
+    "})})};" +
+    "var sections=Array.from(headings).filter(function(h){return h.id&&h.id.indexOf('modul-')===0});" +
+    "var navLinks=document.querySelectorAll('.sidebar-menu a');" +
+    "var progressFill=document.getElementById('progress-fill');" +
+    "var progressLabel=document.getElementById('progress-label');" +
+    "window.addEventListener('scroll',function(){" +
+    "var currentId='';var currentIndex=0;" +
+    "sections.forEach(function(sec,i){if(window.scrollY>=sec.offsetTop-120){currentId=sec.getAttribute('id');currentIndex=i+1}});" +
+    "navLinks.forEach(function(a){a.classList.remove('active');" +
+    "if(currentId&&a.getAttribute('href')==='#'+currentId){a.classList.add('active');a.scrollIntoView({block:'nearest',behavior:'smooth'})}" +
+    "});" +
+    "if(sections.length>0&&progressFill&&progressLabel){" +
+    "var pct=Math.round(currentIndex/sections.length*100);" +
+    "progressFill.style.width=pct+'%';progressLabel.textContent=currentIndex+'/'+sections.length" +
+    "}})});";
+}
+
+// ============================================================
+// EXPORT & IMPORT
+// ============================================================
+function exportHTML() {
+    const html = generateFullHTML();
+    downloadFile(html, slugify(state.title) + '.html', 'text/html');
+    showToast('HTML berhasil di-export!', 'success');
+}
+
+function exportJSON() {
+    downloadFile(JSON.stringify(state, null, 2), slugify(state.title) + '.json', 'application/json');
+    showToast('JSON berhasil di-export!', 'success');
+}
+
+function loadJSONClick() { document.getElementById('json-input').click(); }
+
+function handleLoadJSON(event) {
+    const file = event.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const data = JSON.parse(e.target.result);
+            if (!data.title || !Array.isArray(data.modules)) { showToast('Format JSON tidak valid.', 'error'); return; }
+            state = data; saveState(); activeView = 'settings'; renderAll();
+            showToast('Data berhasil dimuat dari ' + file.name, 'success');
+        } catch (err) { showToast('Gagal parsing JSON: ' + err.message, 'error'); }
+    };
+    reader.readAsText(file);
+    event.target.value = '';
+}
+
+// ============================================================
+// UTILITIES
+// ============================================================
+function escHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
+function escAttr(str) { return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function slugify(text) { return text.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'tutorial'; }
+function downloadFile(content, filename, mime) {
+    const blob = new Blob([content], { type: mime + ';charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+// ============================================================
+// TOAST & CONFIRM
+// ============================================================
+function showToast(message, type) {
+    type = type || 'info';
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = 'toast ' + type;
+    const icons = { success: icon('check'), error: icon('xCircle'), info: icon('info') };
+    toast.innerHTML = (icons[type]||'') + ' ' + escHtml(message);
+    container.appendChild(toast);
+    setTimeout(() => { toast.style.opacity='0'; toast.style.transform='translateX(100%)'; toast.style.transition='all 0.3s ease'; setTimeout(() => toast.remove(), 300); }, 3000);
+}
+
+function showConfirm(title, message, onConfirm) {
+    document.getElementById('confirm-title').textContent = title;
+    document.getElementById('confirm-message').textContent = message;
+    pendingConfirmFn = onConfirm;
+    document.getElementById('confirm-modal').classList.add('open');
+}
+function closeConfirm() { document.getElementById('confirm-modal').classList.remove('open'); pendingConfirmFn = null; }
+function confirmAction() { if (pendingConfirmFn) pendingConfirmFn(); closeConfirm(); }
+
+// ============================================================
+// KEYBOARD SHORTCUTS
+// ============================================================
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { closePreview(); closeConfirm(); }
+    if (e.ctrlKey && e.key === 'p') { e.preventDefault(); openPreview(); }
+    if (e.ctrlKey && e.key === 's') { e.preventDefault(); exportHTML(); }
+    if (e.ctrlKey && e.shiftKey && e.key === 'S') { e.preventDefault(); exportJSON(); }
+});
+
+// ============================================================
+// INITIAL RENDER
+// ============================================================
+renderAll();
+</script>
+
+</body>
+</html>

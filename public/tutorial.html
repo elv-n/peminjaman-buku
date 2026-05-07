@@ -1,0 +1,3860 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>
+            Tutorial Lengkap: Sistem Peminjaman Buku — Laravel 12 + Breeze
+        </title>
+        <!-- Highlight.js Theme -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css"
+        />
+        <!-- Google Font -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --bg: #ffffff;
+                --bg-card: #f6f8fa;
+                --bg-code: #f0f2f5;
+                --border: #d8dee4;
+                --text: #1f2328;
+                --text-muted: #656d76;
+                --text-heading: #1f2328;
+                --accent: #0969da;
+                --accent-green: #1a7f37;
+                --accent-yellow: #9a6700;
+                --accent-red: #cf222e;
+                --accent-purple: #8250df;
+                --accent-orange: #bc4c00;
+                --link: #0969da;
+                --radius: 8px;
+            }
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            html {
+                scroll-behavior: smooth;
+            }
+            body {
+                font-family:
+                    "Inter",
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    sans-serif;
+                background: var(--bg);
+                color: var(--text);
+                line-height: 1.7;
+                font-size: 15px;
+                display: flex;
+                margin: 0;
+            }
+            /* Sidebar Styles */
+            .sidebar {
+                width: 300px;
+                height: 100vh;
+                position: sticky;
+                top: 0;
+                overflow-y: auto;
+                background: #ffffff;
+                border-right: 1px solid var(--border);
+                padding: 0;
+                z-index: 100;
+                display: flex;
+                flex-direction: column;
+            }
+            /* Scrollbar Sidebar */
+            .sidebar::-webkit-scrollbar {
+                width: 4px;
+            }
+            .sidebar::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            .sidebar::-webkit-scrollbar-thumb {
+                background: var(--border);
+                border-radius: 4px;
+            }
+            .sidebar::-webkit-scrollbar-thumb:hover {
+                background: var(--text-muted);
+            }
+
+            .sidebar-header {
+                padding: 20px 20px 0;
+                flex-shrink: 0;
+            }
+            .sidebar-brand {
+                font-size: 1.05em;
+                font-weight: 800;
+                color: var(--text-heading);
+                margin-bottom: 2px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                letter-spacing: -0.3px;
+            }
+            .sidebar-subtitle {
+                font-size: 0.78em;
+                color: var(--text-muted);
+                font-weight: 400;
+                margin-bottom: 16px;
+            }
+            .sidebar-search {
+                position: relative;
+                margin-bottom: 12px;
+                padding: 0 20px;
+                flex-shrink: 0;
+            }
+            .sidebar-search input {
+                width: 100%;
+                padding: 8px 12px 8px 32px;
+                border: 1px solid var(--border);
+                border-radius: 6px;
+                font-size: 0.82em;
+                font-family: inherit;
+                background: var(--bg-card);
+                color: var(--text);
+                outline: none;
+                transition:
+                    border-color 0.2s,
+                    box-shadow 0.2s;
+            }
+            .sidebar-search input:focus {
+                border-color: var(--accent);
+                box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.12);
+            }
+            .sidebar-search input::placeholder {
+                color: var(--text-muted);
+            }
+            .sidebar-search-icon {
+                position: absolute;
+                left: 30px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--text-muted);
+                font-size: 0.82em;
+                pointer-events: none;
+            }
+            .sidebar-divider {
+                height: 1px;
+                background: var(--border);
+                margin: 0 20px 8px;
+                flex-shrink: 0;
+            }
+            .sidebar-menu-wrap {
+                flex: 1;
+                overflow-y: auto;
+                padding: 4px 12px 20px;
+            }
+            .sidebar-menu-wrap::-webkit-scrollbar {
+                width: 4px;
+            }
+            .sidebar-menu-wrap::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            .sidebar-menu-wrap::-webkit-scrollbar-thumb {
+                background: var(--border);
+                border-radius: 4px;
+            }
+            .sidebar-menu {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+            .sidebar-menu li {
+                margin-bottom: 1px;
+            }
+            .sidebar-menu a {
+                display: flex;
+                align-items: baseline;
+                gap: 10px;
+                padding: 8px 10px;
+                color: var(--text-muted);
+                text-decoration: none;
+                border-radius: 6px;
+                font-size: 0.84em;
+                font-weight: 500;
+                transition: all 0.15s ease;
+                line-height: 1.45;
+                border: 1px solid transparent;
+            }
+            .sidebar-menu a:hover {
+                background: var(--bg-card);
+                color: var(--text-heading);
+                text-decoration: none;
+            }
+            .sidebar-menu a.active {
+                background: rgba(9, 105, 218, 0.07);
+                color: var(--accent);
+                font-weight: 600;
+                border-color: rgba(9, 105, 218, 0.15);
+            }
+            .sidebar-menu .modul-num {
+                background: var(--bg-card);
+                color: var(--text-muted);
+                min-width: 26px;
+                height: 22px;
+                padding: 0 6px;
+                border-radius: 5px;
+                font-size: 0.8em;
+                font-weight: 700;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                border: 1px solid var(--border);
+                line-height: 1;
+            }
+            .sidebar-menu a:hover .modul-num {
+                background: #eef1f5;
+                color: var(--text-heading);
+            }
+            .sidebar-menu a.active .modul-num {
+                background: var(--accent);
+                color: #fff;
+                border-color: var(--accent);
+            }
+            .sidebar-menu .modul-title {
+                flex: 1;
+                min-width: 0;
+            }
+            .sidebar-progress {
+                flex-shrink: 0;
+                padding: 12px 20px;
+                border-top: 1px solid var(--border);
+                font-size: 0.75em;
+                color: var(--text-muted);
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .sidebar-progress-bar {
+                flex: 1;
+                height: 3px;
+                background: var(--border);
+                border-radius: 3px;
+                overflow: hidden;
+            }
+            .sidebar-progress-fill {
+                height: 100%;
+                background: var(--accent);
+                border-radius: 3px;
+                width: 0%;
+                transition: width 0.3s ease;
+            }
+
+            .main-content {
+                width: calc(100% - 300px);
+                min-height: 100vh;
+                background: var(--bg);
+            }
+            .container {
+                max-width: 900px;
+                margin: 0 auto;
+                padding: 40px 48px 80px;
+            }
+
+            /* Modern Step Numbering */
+            .step-list {
+                list-style: none;
+                counter-reset: custom-step;
+                padding-left: 0;
+                margin-top: 24px;
+            }
+            .step-list > li {
+                position: relative;
+                padding-left: 52px;
+                margin-bottom: 24px;
+                background: var(--bg-card);
+                border: 1px solid var(--border);
+                border-radius: var(--radius);
+                padding-top: 18px;
+                padding-bottom: 18px;
+                padding-right: 20px;
+            }
+            .step-list > li::before {
+                content: counter(custom-step);
+                counter-increment: custom-step;
+                position: absolute;
+                left: -16px;
+                top: 16px;
+                background: var(--accent);
+                color: #fff;
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 800;
+                font-size: 14px;
+                box-shadow: 0 0 0 4px var(--bg);
+            }
+            /* Headings */
+            h1 {
+                font-size: 2.2em;
+                font-weight: 800;
+                color: var(--text-heading);
+                margin-bottom: 8px;
+                border-bottom: 1px solid var(--border);
+                padding-bottom: 16px;
+            }
+            h2 {
+                font-size: 1.6em;
+                font-weight: 700;
+                color: var(--text-heading);
+                margin-top: 48px;
+                margin-bottom: 16px;
+                padding-bottom: 8px;
+                border-bottom: 1px solid var(--border);
+            }
+            h3 {
+                font-size: 1.3em;
+                font-weight: 700;
+                color: var(--text-heading);
+                margin-top: 36px;
+                margin-bottom: 12px;
+            }
+            /* Module heading banner */
+            h3.modul-heading {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                background: linear-gradient(135deg, #f0f7ff 0%, #f6f8fa 100%);
+                border: 1px solid #d0e3f7;
+                border-left: 4px solid var(--accent);
+                border-radius: var(--radius);
+                padding: 16px 20px;
+                margin-top: 48px;
+                margin-bottom: 20px;
+                font-size: 1.15em;
+                position: relative;
+            }
+            h3.modul-heading .modul-badge {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                background: var(--accent);
+                color: #fff;
+                min-width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                font-size: 0.82em;
+                font-weight: 800;
+                flex-shrink: 0;
+                box-shadow: 0 2px 6px rgba(9, 105, 218, 0.25);
+                letter-spacing: -0.3px;
+            }
+            h3.modul-heading .modul-heading-title {
+                flex: 1;
+                min-width: 0;
+                line-height: 1.35;
+            }
+            h4 {
+                font-size: 1.05em;
+                font-weight: 600;
+                color: var(--text-heading);
+                margin-top: 24px;
+                margin-bottom: 8px;
+            }
+            /* Paragraph */
+            p {
+                margin-bottom: 16px;
+            }
+            strong {
+                color: var(--text-heading);
+                font-weight: 600;
+            }
+            a {
+                color: var(--link);
+                text-decoration: none;
+            }
+            a:hover {
+                text-decoration: underline;
+            }
+            /* Lists */
+            ul,
+            ol {
+                margin-bottom: 16px;
+                padding-left: 28px;
+            }
+            li {
+                margin-bottom: 4px;
+            }
+            li code {
+                background: rgba(175, 184, 193, 0.2);
+                padding: 2px 6px;
+                border-radius: 4px;
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.88em;
+                color: var(--accent);
+            }
+            /* Blockquote (used for TIP/NOTE/IMPORTANT) */
+            blockquote {
+                margin: 16px 0;
+                padding: 14px 16px;
+                border-radius: var(--radius);
+                font-size: 0.92em;
+                line-height: 1.6;
+                border: 1px solid transparent;
+            }
+            blockquote p {
+                margin-bottom: 4px;
+            }
+            blockquote p:last-child {
+                margin-bottom: 0;
+            }
+            blockquote code {
+                background: rgba(175, 184, 193, 0.2);
+                padding: 2px 6px;
+                border-radius: 4px;
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.88em;
+            }
+            .note {
+                background: #fffbeb;
+                border-color: #f3d98b;
+                border-left: 4px solid var(--accent-yellow);
+            }
+            .note .alert-title {
+                color: var(--accent-yellow);
+            }
+            .tip {
+                background: #eefbf0;
+                border-color: #b8e6c0;
+                border-left: 4px solid var(--accent-green);
+            }
+            .tip .alert-title {
+                color: var(--accent-green);
+            }
+            .important {
+                background: #fef2f2;
+                border-color: #f5c6c6;
+                border-left: 4px solid var(--accent-red);
+            }
+            .important .alert-title {
+                color: var(--accent-red);
+            }
+            .warning {
+                background: #fff8eb;
+                border-color: #eed8a0;
+                border-left: 4px solid var(--accent-yellow);
+            }
+            .warning .alert-title {
+                color: var(--accent-yellow);
+            }
+            .alert-title {
+                font-weight: 700;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                margin-bottom: 6px;
+                font-size: 0.88em;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+            /* Code blocks */
+            pre {
+                margin: 16px 0;
+                border-radius: var(--radius);
+                overflow-x: auto;
+                border: 1px solid var(--border);
+                position: relative;
+            }
+            pre code {
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.85em;
+                line-height: 1.6;
+            }
+            code:not(pre code) {
+                background: rgba(175, 184, 193, 0.2);
+                padding: 2px 6px;
+                border-radius: 4px;
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.88em;
+                color: var(--accent);
+            }
+            .code-label {
+                position: absolute;
+                top: 0;
+                right: 0;
+                background: rgba(175, 184, 193, 0.3);
+                color: var(--text-muted);
+                font-size: 0.7em;
+                padding: 4px 10px;
+                border-radius: 0 var(--radius) 0 var(--radius);
+                font-family: "JetBrains Mono", monospace;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+            /* Tables */
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 16px 0;
+                font-size: 0.9em;
+            }
+            th {
+                background: var(--bg-card);
+                color: var(--text-heading);
+                font-weight: 600;
+                text-align: left;
+                padding: 10px 14px;
+                border: 1px solid var(--border);
+            }
+            td {
+                padding: 8px 14px;
+                border: 1px solid var(--border);
+                vertical-align: top;
+            }
+            tr:nth-child(even) td {
+                background: #f6f8fa;
+            }
+            td code {
+                background: rgba(175, 184, 193, 0.2);
+                padding: 1px 5px;
+                border-radius: 3px;
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.88em;
+                color: var(--accent-orange);
+            }
+            /* Horizontal rule */
+            hr {
+                border: none;
+                border-top: 1px solid var(--border);
+                margin: 36px 0;
+            }
+            /* Mermaid */
+            .mermaid {
+                background: var(--bg-card);
+                border: 1px solid var(--border);
+                border-radius: var(--radius);
+                padding: 24px;
+                margin: 16px 0;
+                text-align: center;
+            }
+            /* Badge labels */
+            .badge-new {
+                display: inline-block;
+                background: rgba(26, 127, 55, 0.1);
+                color: var(--accent-green);
+                font-size: 0.75em;
+                font-weight: 600;
+                padding: 1px 8px;
+                border-radius: 12px;
+            }
+            .badge-modify {
+                display: inline-block;
+                background: rgba(154, 103, 0, 0.1);
+                color: var(--accent-yellow);
+                font-size: 0.75em;
+                font-weight: 600;
+                padding: 1px 8px;
+                border-radius: 12px;
+            }
+            /* TOC floating */
+            .toc-btn {
+                position: fixed;
+                bottom: 24px;
+                right: 24px;
+                width: 48px;
+                height: 48px;
+                background: var(--accent);
+                color: #fff;
+                border: none;
+                border-radius: 50%;
+                font-size: 1.2em;
+                cursor: pointer;
+                z-index: 999;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: transform 0.2s;
+            }
+            .toc-btn:hover {
+                transform: scale(1.1);
+            }
+            /* Print style */
+            @media print {
+                body {
+                    background: #fff;
+                    color: #000;
+                }
+                pre {
+                    border-color: #ccc;
+                }
+                th {
+                    background: #f0f0f0;
+                }
+            }
+            /* Responsive */
+            @media (max-width: 1024px) {
+                .sidebar {
+                    display: none;
+                }
+                .main-content {
+                    width: 100%;
+                }
+                .sidebar-progress {
+                    display: none;
+                }
+            }
+            @media (max-width: 640px) {
+                .container {
+                    padding: 20px 16px 60px;
+                }
+                h1 {
+                    font-size: 1.6em;
+                }
+                h2 {
+                    font-size: 1.3em;
+                }
+                table {
+                    font-size: 0.8em;
+                }
+                td,
+                th {
+                    padding: 6px 8px;
+                }
+                .step-list > li {
+                    padding: 16px 16px 16px 40px;
+                    margin-left: 16px;
+                }
+                .step-list > li::before {
+                    left: -20px;
+                    width: 28px;
+                    height: 28px;
+                    font-size: 12px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Sidebar Navigasi -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-brand">Daftar Modul</div>
+                <div class="sidebar-subtitle">
+                    Laravel 12 + Breeze — 17 modul
+                </div>
+            </div>
+            <div class="sidebar-search">
+                <span class="sidebar-search-icon">🔍</span>
+                <input
+                    type="text"
+                    id="sidebar-filter"
+                    placeholder="Cari modul..."
+                    autocomplete="off"
+                />
+            </div>
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-menu-wrap">
+                <ul class="sidebar-menu" id="toc-menu">
+                    <!-- List Modul di-generate otomatis oleh JavaScript -->
+                </ul>
+            </div>
+            <div class="sidebar-progress">
+                <span id="progress-label">0%</span>
+                <div class="sidebar-progress-bar">
+                    <div class="sidebar-progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <button
+            class="toc-btn"
+            onclick="window.scrollTo({ top: 0 })"
+            title="Ke Atas"
+        >
+            ↑
+        </button>
+
+        <div class="main-content">
+            <div class="container">
+                <!-- ======================== HEADER ======================== -->
+                <h1>
+                    Tutorial Lengkap: Sistem Peminjaman Buku dengan Laravel 12 +
+                    Breeze
+                </h1>
+                <blockquote class="tip">
+                    <p>
+                        Tutorial praktik UKK — Membangun aplikasi perpustakaan
+                        digital dari nol.
+                    </p>
+                </blockquote>
+
+                <!-- ======================== GAMBARAN UMUM ======================== -->
+                <h2>Gambaran Umum Aplikasi</h2>
+                <p>
+                    Aplikasi ini memiliki <strong>2 role</strong> (Admin &amp;
+                    User) dengan fitur:
+                </p>
+                <ul>
+                    <li>
+                        <strong>Admin</strong>: CRUD Buku, Kelola User,
+                        Verifikasi Peminjaman/Pengembalian
+                    </li>
+                    <li>
+                        <strong>User</strong>: Jelajahi Buku, Pinjam Buku,
+                        Ajukan Pengembalian
+                    </li>
+                </ul>
+
+                <!-- ======================== PRASYARAT ======================== -->
+                <h2>Prasyarat (Tools yang Harus Diinstal)</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Software</th>
+                            <th>Versi Minimum</th>
+                            <th>Keterangan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>PHP</td>
+                            <td>8.2+</td>
+                            <td>Wajib untuk Laravel 12</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Composer</td>
+                            <td>2.x</td>
+                            <td>Package manager PHP</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Node.js</td>
+                            <td>18+</td>
+                            <td>Untuk compile asset (Vite)</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>XAMPP</td>
+                            <td>8.2+</td>
+                            <td>Apache + MySQL</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>VS Code</td>
+                            <td>Terbaru</td>
+                            <td>Text editor</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <hr />
+
+                <!-- ======================== DAFTAR MODUL ======================== -->
+                <h2>Daftar Modul Tutorial</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Modul</th>
+                            <th>Judul</th>
+                            <th>Durasi Est.</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Instalasi Laravel &amp; Breeze</td>
+                            <td>15 menit</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Konfigurasi Database &amp; .env</td>
+                            <td>10 menit</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Migration — Tabel Users (modifikasi role)</td>
+                            <td>15 menit</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Migration — Tabel Books</td>
+                            <td>15 menit</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Migration — Tabel Transactions</td>
+                            <td>15 menit</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>
+                                Model &amp; Relationship (User, Book,
+                                Transaction)
+                            </td>
+                            <td>20 menit</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>Middleware Admin</td>
+                            <td>15 menit</td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>Seeder (Admin &amp; Buku Contoh)</td>
+                            <td>15 menit</td>
+                        </tr>
+                        <tr>
+                            <td>9</td>
+                            <td>Layout &amp; Navigasi (Bootstrap 5)</td>
+                            <td>25 menit</td>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+                            <td>Controller &amp; Views — CRUD Buku (Admin)</td>
+                            <td>30 menit</td>
+                        </tr>
+                        <tr>
+                            <td>11</td>
+                            <td>
+                                Controller &amp; Views — Kelola User (Admin)
+                            </td>
+                            <td>25 menit</td>
+                        </tr>
+                        <tr>
+                            <td>12</td>
+                            <td>Controller &amp; Views — Transaksi Admin</td>
+                            <td>30 menit</td>
+                        </tr>
+                        <tr>
+                            <td>13</td>
+                            <td>Halaman Katalog Buku (User)</td>
+                            <td>25 menit</td>
+                        </tr>
+                        <tr>
+                            <td>14</td>
+                            <td>Fitur Peminjaman &amp; Pengembalian (User)</td>
+                            <td>25 menit</td>
+                        </tr>
+                        <tr>
+                            <td>15</td>
+                            <td>Dashboard Statistik</td>
+                            <td>20 menit</td>
+                        </tr>
+                        <tr>
+                            <td>16</td>
+                            <td>Routes — Menyatukan Semuanya</td>
+                            <td>15 menit</td>
+                        </tr>
+                        <tr>
+                            <td>17</td>
+                            <td>Testing &amp; Finishing</td>
+                            <td>15 menit</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p><strong>Total Estimasi: ± 5-6 jam praktik</strong></p>
+
+                <hr />
+
+                <!-- ======================== DAFTAR FILE ======================== -->
+                <h2>Daftar File yang Akan Dibuat/Dimodifikasi</h2>
+
+                <h3>🔧 Konfigurasi</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>File</th>
+                            <th>Aksi</th>
+                            <th>Modul</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td><code>.env</code></td>
+                            <td><span class="badge-modify">MODIFY</span></td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td><code>bootstrap/app.php</code></td>
+                            <td><span class="badge-modify">MODIFY</span></td>
+                            <td>7</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>🗃️ Database (Migrations)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>File</th>
+                            <th>Aksi</th>
+                            <th>Modul</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>3</td>
+                            <td>
+                                <code
+                                    >database/migrations/xxxx_create_users_table.php</code
+                                >
+                            </td>
+                            <td><span class="badge-modify">MODIFY</span></td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>
+                                <code
+                                    >database/migrations/xxxx_create_books_table.php</code
+                                >
+                            </td>
+                            <td><span class="badge-new">NEW</span></td>
+                            <td>4</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>
+                                <code
+                                    >database/migrations/xxxx_create_transactions_table.php</code
+                                >
+                            </td>
+                            <td><span class="badge-new">NEW</span></td>
+                            <td>5</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>📦 Models</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>File</th>
+                            <th>Aksi</th>
+                            <th>Modul</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>6</td>
+                            <td><code>app/Models/User.php</code></td>
+                            <td><span class="badge-modify">MODIFY</span></td>
+                            <td>6</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td><code>app/Models/Book.php</code></td>
+                            <td><span class="badge-new">NEW</span></td>
+                            <td>6</td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td><code>app/Models/Transaction.php</code></td>
+                            <td><span class="badge-new">NEW</span></td>
+                            <td>6</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>🛡️ Middleware</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>File</th>
+                            <th>Aksi</th>
+                            <th>Modul</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>9</td>
+                            <td>
+                                <code
+                                    >app/Http/Middleware/AdminMiddleware.php</code
+                                >
+                            </td>
+                            <td><span class="badge-new">NEW</span></td>
+                            <td>7</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>🌱 Seeders</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>File</th>
+                            <th>Aksi</th>
+                            <th>Modul</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>10</td>
+                            <td>
+                                <code>database/seeders/AdminSeeder.php</code>
+                            </td>
+                            <td><span class="badge-new">NEW</span></td>
+                            <td>8</td>
+                        </tr>
+                        <tr>
+                            <td>11</td>
+                            <td>
+                                <code>database/seeders/BookSeeder.php</code>
+                            </td>
+                            <td><span class="badge-new">NEW</span></td>
+                            <td>8</td>
+                        </tr>
+                        <tr>
+                            <td>12</td>
+                            <td>
+                                <code>database/seeders/DatabaseSeeder.php</code>
+                            </td>
+                            <td><span class="badge-modify">MODIFY</span></td>
+                            <td>8</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>🎨 Layouts &amp; Komponen</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>File</th>
+                            <th>Aksi</th>
+                            <th>Modul</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>13</td>
+                            <td>
+                                <code
+                                    >resources/views/layouts/app.blade.php</code
+                                >
+                            </td>
+                            <td><span class="badge-modify">MODIFY</span></td>
+                            <td>9</td>
+                        </tr>
+                        <tr>
+                            <td>14</td>
+                            <td>
+                                <code
+                                    >resources/views/layouts/navigation.blade.php</code
+                                >
+                            </td>
+                            <td><span class="badge-modify">MODIFY</span></td>
+                            <td>9</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>🎮 Controllers</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>File</th>
+                            <th>Aksi</th>
+                            <th>Modul</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>15</td>
+                            <td>
+                                <code
+                                    >app/Http/Controllers/BookController.php</code
+                                >
+                            </td>
+                            <td><span class="badge-new">NEW</span></td>
+                            <td>10</td>
+                        </tr>
+                        <tr>
+                            <td>16</td>
+                            <td>
+                                <code
+                                    >app/Http/Controllers/UserController.php</code
+                                >
+                            </td>
+                            <td><span class="badge-new">NEW</span></td>
+                            <td>11</td>
+                        </tr>
+                        <tr>
+                            <td>17</td>
+                            <td>
+                                <code
+                                    >app/Http/Controllers/TransactionController.php</code
+                                >
+                            </td>
+                            <td><span class="badge-new">NEW</span></td>
+                            <td>12</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>📄 Views — Admin</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>File</th>
+                            <th>Aksi</th>
+                            <th>Modul</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>18</td>
+                            <td>
+                                <code
+                                    >resources/views/admin/books/index.blade.php</code
+                                >
+                            </td>
+                            <td><span class="badge-new">NEW</span></td>
+                            <td>10</td>
+                        </tr>
+                        <tr>
+                            <td>19</td>
+                            <td>
+                                <code
+                                    >resources/views/admin/books/create.blade.php</code
+                                >
+                            </td>
+                            <td><span class="badge-new">NEW</span></td>
+                            <td>10</td>
+                        </tr>
+                        <tr>
+                            <td>20</td>
+                            <td>
+                                <code
+                                    >resources/views/admin/books/edit.blade.php</code
+                                >
+                            </td>
+                            <td><span class="badge-new">NEW</span></td>
+                            <td>10</td>
+                        </tr>
+                        <tr>
+                            <td>21</td>
+                            <td>
+                                <code
+                                    >resources/views/admin/users/index.blade.php</code
+                                >
+                            </td>
+                            <td><span class="badge-new">NEW</span></td>
+                            <td>11</td>
+                        </tr>
+                        <tr>
+                            <td>22</td>
+                            <td>
+                                <code
+                                    >resources/views/admin/users/create.blade.php</code
+                                >
+                            </td>
+                            <td><span class="badge-new">NEW</span></td>
+                            <td>11</td>
+                        </tr>
+                        <tr>
+                            <td>23</td>
+                            <td>
+                                <code
+                                    >resources/views/admin/users/edit.blade.php</code
+                                >
+                            </td>
+                            <td><span class="badge-new">NEW</span></td>
+                            <td>11</td>
+                        </tr>
+                        <tr>
+                            <td>24</td>
+                            <td>
+                                <code
+                                    >resources/views/admin/transactions/index.blade.php</code
+                                >
+                            </td>
+                            <td><span class="badge-new">NEW</span></td>
+                            <td>12</td>
+                        </tr>
+                        <tr>
+                            <td>25</td>
+                            <td>
+                                <code
+                                    >resources/views/admin/transactions/create.blade.php</code
+                                >
+                            </td>
+                            <td><span class="badge-new">NEW</span></td>
+                            <td>12</td>
+                        </tr>
+                        <tr>
+                            <td>26</td>
+                            <td>
+                                <code
+                                    >resources/views/admin/transactions/edit.blade.php</code
+                                >
+                            </td>
+                            <td><span class="badge-new">NEW</span></td>
+                            <td>12</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>📄 Views — User</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>File</th>
+                            <th>Aksi</th>
+                            <th>Modul</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>27</td>
+                            <td>
+                                <code
+                                    >resources/views/user/books/index.blade.php</code
+                                >
+                            </td>
+                            <td><span class="badge-new">NEW</span></td>
+                            <td>13</td>
+                        </tr>
+                        <tr>
+                            <td>28</td>
+                            <td>
+                                <code
+                                    >resources/views/user/transactions/index.blade.php</code
+                                >
+                            </td>
+                            <td><span class="badge-new">NEW</span></td>
+                            <td>14</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>📊 Dashboard</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>File</th>
+                            <th>Aksi</th>
+                            <th>Modul</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>29</td>
+                            <td>
+                                <code>resources/views/dashboard.blade.php</code>
+                            </td>
+                            <td><span class="badge-modify">MODIFY</span></td>
+                            <td>15</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>🛣️ Routes</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>File</th>
+                            <th>Aksi</th>
+                            <th>Modul</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>30</td>
+                            <td><code>routes/web.php</code></td>
+                            <td><span class="badge-modify">MODIFY</span></td>
+                            <td>16</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    <strong
+                        >Total: 30 file (17 baru, 13 modifikasi dari bawaan
+                        Breeze)</strong
+                    >
+                </p>
+
+                <hr />
+
+                <!-- ======================== DETAIL PER MODUL ======================== -->
+                <h2>Detail Per Modul</h2>
+
+                <hr />
+
+                <!-- ========== MODUL 1 ========== -->
+                <h3>Modul 1: Instalasi Laravel &amp; Breeze</h3>
+                <p>
+                    <strong>Tujuan</strong>: Membuat project Laravel baru dan
+                    menginstal Laravel Breeze untuk autentikasi.
+                </p>
+                <p><strong>Langkah:</strong></p>
+                <pre><code class="language-bash"># 1. Buat project Laravel baru
+composer create-project laravel/laravel peminjaman-buku
+
+# 2. Masuk ke folder project
+cd peminjaman-buku
+
+# 3. Install Laravel Breeze
+composer require laravel/breeze --dev
+
+# 4. Install Breeze dengan Blade stack
+php artisan breeze:install blade
+
+# 5. Install dependensi NPM
+npm install</code></pre>
+
+                <blockquote class="tip">
+                    <p class="alert-title">💡 TIP</p>
+                    <p>
+                        Setelah install breeze, Laravel otomatis menyediakan
+                        halaman Login, Register, Profile, dan layout dasar.
+                    </p>
+                </blockquote>
+                <p>
+                    <strong>Hasil</strong>: Project Laravel dengan fitur
+                    login/register siap pakai.
+                </p>
+
+                <hr />
+
+                <!-- ========== MODUL 2 ========== -->
+                <h3>Modul 2: Konfigurasi Database &amp; .env</h3>
+                <p>
+                    <strong>Tujuan</strong>: Menghubungkan Laravel ke database
+                    MySQL.
+                </p>
+                <p><strong>Langkah:</strong></p>
+                <ol>
+                    <li>Buka XAMPP → Start Apache &amp; MySQL</li>
+                    <li>
+                        Buka phpMyAdmin → Buat database baru:
+                        <code>peminjaman_buku</code>
+                    </li>
+                    <li>Edit file <code>.env</code>:</li>
+                </ol>
+                <pre><code class="language-ini">DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=peminjaman_buku
+DB_USERNAME=root
+DB_PASSWORD=</code></pre>
+
+                <blockquote class="important">
+                    <p class="alert-title">❗ IMPORTANT</p>
+                    <p>
+                        Pastikan nama database di <code>.env</code> sama persis
+                        dengan yang dibuat di phpMyAdmin.
+                    </p>
+                </blockquote>
+
+                <hr />
+
+                <!-- ========== MODUL 3 ========== -->
+                <h3>Modul 3: Migration — Tabel Users (Tambah Role)</h3>
+                <p>
+                    <strong>Tujuan</strong>: Menambahkan kolom
+                    <code>role</code> pada tabel users untuk membedakan admin
+                    dan user biasa.
+                </p>
+                <p>
+                    <strong>File</strong>:
+                    <code
+                        >database/migrations/0001_01_01_000000_create_users_table.php</code
+                    >
+                </p>
+                <p>
+                    <strong>Penjelasan</strong>: File ini sudah ada dari bawaan
+                    Laravel. Kita hanya perlu
+                    <strong>menambahkan 1 baris</strong> untuk kolom role.
+                </p>
+                <pre><code class="language-php">&lt;?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('users', function (Blueprint $table) {
+            $table-&gt;id();
+            $table-&gt;string('name');
+            $table-&gt;string('email')-&gt;unique();
+            $table-&gt;timestamp('email_verified_at')-&gt;nullable();
+            $table-&gt;string('password');
+            $table-&gt;enum('role', ['admin', 'user'])-&gt;default('user'); // ← TAMBAHKAN BARIS INI
+            $table-&gt;rememberToken();
+            $table-&gt;timestamps();
+        });
+
+        // Tabel bawaan lainnya (jangan diubah)
+        Schema::create('password_reset_tokens', function (Blueprint $table) {
+            $table-&gt;string('email')-&gt;primary();
+            $table-&gt;string('token');
+            $table-&gt;timestamp('created_at')-&gt;nullable();
+        });
+
+        Schema::create('sessions', function (Blueprint $table) {
+            $table-&gt;string('id')-&gt;primary();
+            $table-&gt;foreignId('user_id')-&gt;nullable()-&gt;index();
+            $table-&gt;string('ip_address', 45)-&gt;nullable();
+            $table-&gt;text('user_agent')-&gt;nullable();
+            $table-&gt;longText('payload');
+            $table-&gt;integer('last_activity')-&gt;index();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('users');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('sessions');
+    }
+};</code></pre>
+
+                <blockquote class="note">
+                    <p class="alert-title">ℹ️ NOTE</p>
+                    <p>
+                        <code
+                            >enum('role', ['admin',
+                            'user'])-&gt;default('user')</code
+                        >
+                        artinya kolom role hanya bisa berisi 'admin' atau
+                        'user', dan defaultnya adalah 'user' (saat registrasi).
+                    </p>
+                </blockquote>
+
+                <hr />
+
+                <!-- ========== MODUL 4 ========== -->
+                <h3>Modul 4: Migration — Tabel Books</h3>
+                <p>
+                    <strong>Tujuan</strong>: Membuat tabel untuk menyimpan data
+                    buku perpustakaan.
+                </p>
+                <p>
+                    <strong>Langkah</strong>: Jalankan perintah berikut di
+                    terminal:
+                </p>
+                <pre><code class="language-bash">php artisan make:migration create_books_table</code></pre>
+                <p>
+                    <strong>File</strong>:
+                    <code>database/migrations/xxxx_create_books_table.php</code>
+                </p>
+                <pre><code class="language-php">&lt;?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('books', function (Blueprint $table) {
+            $table-&gt;id();                              // ID auto-increment
+            $table-&gt;string('title');                    // Judul buku
+            $table-&gt;string('author');                   // Penulis
+            $table-&gt;string('publisher');                // Penerbit
+            $table-&gt;year('year');                       // Tahun terbit
+            $table-&gt;string('isbn')-&gt;nullable();         // Nomor ISBN (opsional)
+            $table-&gt;string('cover')-&gt;nullable();        // Path gambar sampul
+            $table-&gt;integer('stock')-&gt;default(0);       // Jumlah stok
+            $table-&gt;timestamps();                      // created_at &amp; updated_at
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('books');
+    }
+};</code></pre>
+
+                <blockquote class="note">
+                    <p class="alert-title">ℹ️ NOTE</p>
+                    <p><strong>Penjelasan tipe data:</strong></p>
+                    <ul>
+                        <li><code>string</code> = varchar (teks pendek)</li>
+                        <li><code>year</code> = tipe tahun (4 digit)</li>
+                        <li><code>integer</code> = bilangan bulat</li>
+                        <li><code>nullable()</code> = boleh kosong</li>
+                        <li><code>default(0)</code> = nilai awal otomatis 0</li>
+                    </ul>
+                </blockquote>
+
+                <hr />
+
+                <!-- ========== MODUL 5 ========== -->
+                <h3>Modul 5: Migration — Tabel Transactions</h3>
+                <p>
+                    <strong>Tujuan</strong>: Membuat tabel untuk mencatat
+                    peminjaman buku.
+                </p>
+                <pre><code class="language-bash">php artisan make:migration create_transactions_table</code></pre>
+                <p>
+                    <strong>File</strong>:
+                    <code
+                        >database/migrations/xxxx_create_transactions_table.php</code
+                    >
+                </p>
+                <pre><code class="language-php">&lt;?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('transactions', function (Blueprint $table) {
+            $table-&gt;id();
+            $table-&gt;foreignId('user_id')-&gt;constrained()-&gt;cascadeOnDelete();   // Relasi ke users
+            $table-&gt;foreignId('book_id')-&gt;constrained()-&gt;cascadeOnDelete();   // Relasi ke books
+            $table-&gt;date('borrow_date');                                       // Tanggal pinjam
+            $table-&gt;date('due_date');                                          // Tanggal jatuh tempo
+            $table-&gt;date('return_date')-&gt;nullable();                           // Tanggal kembali (null = belum)
+            $table-&gt;enum('status', ['borrowed', 'pending', 'returned'])-&gt;default('borrowed');
+            $table-&gt;timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('transactions');
+    }
+};</code></pre>
+
+                <blockquote class="important">
+                    <p class="alert-title">❗ IMPORTANT</p>
+                    <p><strong>Penjelasan Status Peminjaman:</strong></p>
+                    <ul>
+                        <li><code>borrowed</code> = Buku sedang dipinjam</li>
+                        <li>
+                            <code>pending</code> = User sudah ajukan
+                            pengembalian, menunggu konfirmasi admin
+                        </li>
+                        <li>
+                            <code>returned</code> = Buku sudah dikembalikan
+                            &amp; dikonfirmasi admin
+                        </li>
+                    </ul>
+                </blockquote>
+                <p><strong>Jalankan semua migration:</strong></p>
+                <pre><code class="language-bash">php artisan migrate</code></pre>
+
+                <hr />
+
+                <!-- ========== MODUL 6 ========== -->
+                <h3>Modul 6: Model &amp; Relationship</h3>
+                <p>
+                    <strong>Tujuan</strong>: Membuat Model Eloquent dan
+                    mendefinisikan relasi antar tabel.
+                </p>
+
+                <h4>File 1: <code>app/Models/User.php</code> (MODIFY)</h4>
+                <p>
+                    Tambahkan <code>'role'</code> di <code>$fillable</code> dan
+                    method <code>transactions()</code>:
+                </p>
+                <pre><code class="language-php">&lt;?php
+
+namespace App\Models;
+
+use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+
+class User extends Authenticatable
+{
+    use HasFactory, Notifiable;
+
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'role',          // ← TAMBAHKAN INI
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' =&gt; 'datetime',
+            'password' =&gt; 'hashed',
+        ];
+    }
+
+    // ← TAMBAHKAN RELASI INI
+    public function transactions()
+    {
+        return $this-&gt;hasMany(Transaction::class);
+    }
+}</code></pre>
+
+                <h4>File 2: <code>app/Models/Book.php</code> (NEW)</h4>
+                <pre><code class="language-bash">php artisan make:model Book</code></pre>
+                <pre><code class="language-php">&lt;?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Book extends Model
+{
+    protected $fillable = [
+        'title',
+        'author',
+        'publisher',
+        'year',
+        'isbn',
+        'stock',
+        'cover',
+    ];
+
+    public function transactions()
+    {
+        return $this-&gt;hasMany(Transaction::class);
+    }
+}</code></pre>
+
+                <h4>File 3: <code>app/Models/Transaction.php</code> (NEW)</h4>
+                <pre><code class="language-bash">php artisan make:model Transaction</code></pre>
+                <pre><code class="language-php">&lt;?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Transaction extends Model
+{
+    protected $fillable = [
+        'user_id',
+        'book_id',
+        'borrow_date',
+        'due_date',
+        'return_date',
+        'status',
+    ];
+
+    public function user()
+    {
+        return $this-&gt;belongsTo(User::class);
+    }
+
+    public function book()
+    {
+        return $this-&gt;belongsTo(Book::class);
+    }
+}</code></pre>
+
+                <blockquote class="tip">
+                    <p class="alert-title">💡 TIP</p>
+                    <p><strong>Ringkasan Relasi:</strong></p>
+                    <ul>
+                        <li>
+                            <code>User</code> → hasMany →
+                            <code>Transaction</code> (1 user bisa banyak
+                            peminjaman)
+                        </li>
+                        <li>
+                            <code>Book</code> → hasMany →
+                            <code>Transaction</code> (1 buku bisa dipinjam
+                            banyak kali)
+                        </li>
+                        <li>
+                            <code>Transaction</code> → belongsTo →
+                            <code>User</code> &amp; <code>Book</code> (setiap
+                            transaksi milik 1 user dan 1 buku)
+                        </li>
+                    </ul>
+                </blockquote>
+
+                <hr />
+
+                <!-- ========== MODUL 7 ========== -->
+                <h3>Modul 7: Middleware Admin</h3>
+                <p>
+                    <strong>Tujuan</strong>: Membuat middleware untuk membatasi
+                    akses halaman admin.
+                </p>
+                <pre><code class="language-bash">php artisan make:middleware AdminMiddleware</code></pre>
+
+                <h4>
+                    File 1: <code>app/Http/Middleware/AdminMiddleware.php</code>
+                </h4>
+                <pre><code class="language-php">&lt;?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class AdminMiddleware
+{
+    public function handle(Request $request, Closure $next): Response
+    {
+        if (\Illuminate\Support\Facades\Auth::check() &amp;&amp; \Illuminate\Support\Facades\Auth::user()-&gt;role === 'admin') {
+            return $next($request);
+        }
+
+        return redirect('/');
+    }
+}</code></pre>
+
+                <h4>
+                    File 2: <code>bootstrap/app.php</code> (MODIFY — Daftarkan
+                    Middleware)
+                </h4>
+                <pre><code class="language-php">&lt;?php
+
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
+
+return Application::configure(basePath: dirname(__DIR__))
+    -&gt;withRouting(
+        web: __DIR__.'/../routes/web.php',
+        commands: __DIR__.'/../routes/console.php',
+        health: '/up',
+    )
+    -&gt;withMiddleware(function (Middleware $middleware): void {
+        $middleware-&gt;alias([
+            'admin' =&gt; \App\Http\Middleware\AdminMiddleware::class,  // ← TAMBAHKAN INI
+        ]);
+    })
+    -&gt;withExceptions(function (Exceptions $exceptions): void {
+        //
+    })-&gt;create();</code></pre>
+
+                <blockquote class="note">
+                    <p class="alert-title">ℹ️ NOTE</p>
+                    <p>
+                        Di Laravel 12, middleware didaftarkan di
+                        <code>bootstrap/app.php</code> (bukan di
+                        <code>Kernel.php</code>).
+                    </p>
+                </blockquote>
+
+                <hr />
+
+                <!-- ========== MODUL 8 ========== -->
+                <h3>Modul 8: Seeder (Data Awal)</h3>
+                <p>
+                    <strong>Tujuan</strong>: Membuat data awal untuk akun admin
+                    dan buku contoh.
+                </p>
+
+                <h4>File 1: <code>database/seeders/AdminSeeder.php</code></h4>
+                <pre><code class="language-bash">php artisan make:seeder AdminSeeder</code></pre>
+                <pre><code class="language-php">&lt;?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+
+class AdminSeeder extends Seeder
+{
+    public function run(): void
+    {
+        \App\Models\User::create([
+            'name' =&gt; 'Administrator',
+            'email' =&gt; 'admin@admin.com',
+            'password' =&gt; \Illuminate\Support\Facades\Hash::make('password'),
+            'role' =&gt; 'admin',
+        ]);
+
+        \App\Models\User::create([
+            'name' =&gt; 'User Test',
+            'email' =&gt; 'user@user.com',
+            'password' =&gt; \Illuminate\Support\Facades\Hash::make('password'),
+            'role' =&gt; 'user',
+        ]);
+    }
+}</code></pre>
+
+                <h4>File 2: <code>database/seeders/BookSeeder.php</code></h4>
+                <pre><code class="language-bash">php artisan make:seeder BookSeeder</code></pre>
+                <pre><code class="language-php">&lt;?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+
+class BookSeeder extends Seeder
+{
+    public function run(): void
+    {
+        \App\Models\Book::create([
+            'title' =&gt; 'Laskar Pelangi',
+            'author' =&gt; 'Andrea Hirata',
+            'publisher' =&gt; 'Bentang Pustaka',
+            'year' =&gt; 2005,
+            'isbn' =&gt; '9789791227002',
+            'stock' =&gt; 10,
+        ]);
+
+        \App\Models\Book::create([
+            'title' =&gt; 'Bumi',
+            'author' =&gt; 'Tere Liye',
+            'publisher' =&gt; 'Gramedia Pustaka Utama',
+            'year' =&gt; 2014,
+            'isbn' =&gt; '9786020301129',
+            'stock' =&gt; 5,
+        ]);
+
+        \App\Models\Book::create([
+            'title' =&gt; 'Filosofi Teras',
+            'author' =&gt; 'Henry Manampiring',
+            'publisher' =&gt; 'Buku Kompas',
+            'year' =&gt; 2018,
+            'isbn' =&gt; '9786024125189',
+            'stock' =&gt; 7,
+        ]);
+
+        \App\Models\Book::create([
+            'title' =&gt; 'Sang Pemimpi',
+            'author' =&gt; 'Andrea Hirata',
+            'publisher' =&gt; 'Bentang Pustaka',
+            'year' =&gt; 2006,
+            'isbn' =&gt; '9789791227026',
+            'stock' =&gt; 8,
+        ]);
+
+        \App\Models\Book::create([
+            'title' =&gt; 'Negeri 5 Menara',
+            'author' =&gt; 'Ahmad Fuadi',
+            'publisher' =&gt; 'Gramedia Pustaka Utama',
+            'year' =&gt; 2009,
+            'isbn' =&gt; '9789792248616',
+            'stock' =&gt; 4,
+        ]);
+    }
+}</code></pre>
+
+                <h4>
+                    File 3:
+                    <code>database/seeders/DatabaseSeeder.php</code> (MODIFY)
+                </h4>
+                <pre><code class="language-php">&lt;?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+
+class DatabaseSeeder extends Seeder
+{
+    public function run(): void
+    {
+        $this-&gt;call([
+            AdminSeeder::class,
+            BookSeeder::class,
+        ]);
+    }
+}</code></pre>
+
+                <p><strong>Jalankan seeder:</strong></p>
+                <pre><code class="language-bash">php artisan db:seed</code></pre>
+
+                <blockquote class="tip">
+                    <p class="alert-title">💡 TIP</p>
+                    <p>Jika ingin reset database + isi ulang seeder:</p>
+                    <pre><code class="language-bash">php artisan migrate:fresh --seed</code></pre>
+                </blockquote>
+
+                <hr />
+
+                <!-- ========== MODUL 9 ========== -->
+                <h3>Modul 9: Layout &amp; Navigasi (Bootstrap 5)</h3>
+                <p>
+                    <strong>Tujuan</strong>: Memodifikasi layout Breeze dan
+                    menambahkan Bootstrap 5 + Bootstrap Icons.
+                </p>
+
+                <h4>
+                    File 1:
+                    <code>resources/views/layouts/app.blade.php</code> (MODIFY)
+                </h4>
+                <p>
+                    Tambahkan CDN Bootstrap di bagian <code>&lt;head&gt;</code>:
+                </p>
+                <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="{{ str_replace('_', '-', app()-&gt;getLocale()) }}"&gt;
+    &lt;head&gt;
+        &lt;meta charset="utf-8"&gt;
+        &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+        &lt;meta name="csrf-token" content="{{ csrf_token() }}"&gt;
+
+        &lt;title&gt;{{ config('app.name', 'Laravel') }}&lt;/title&gt;
+
+        &lt;!-- Fonts --&gt;
+        &lt;link rel="preconnect" href="https://fonts.bunny.net"&gt;
+        &lt;link href="https://fonts.bunny.net/css?family=figtree:400,500,600&amp;display=swap" rel="stylesheet" /&gt;
+
+        &lt;!-- Bootstrap CSS --&gt;
+        &lt;link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"&gt;
+        &lt;!-- Bootstrap Icons --&gt;
+        &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"&gt;
+
+        &lt;style&gt;
+            .card { border: none; border-radius: 12px; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+            .card:hover { transform: translateY(-5px); }
+            .badge { border-radius: 6px; font-weight: 500; }
+            .btn { border-radius: 8px; font-weight: 500; }
+        &lt;/style&gt;
+
+        &lt;!-- Scripts --&gt;
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        &lt;!-- Bootstrap JS --&gt;
+        &lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"&gt;&lt;/script&gt;
+    &lt;/head&gt;
+    &lt;body class="antialiased bg-light"&gt;
+        &lt;div class="min-h-screen bg-gray-100"&gt;
+            @include('layouts.navigation')
+
+            &lt;!-- Page Heading --&gt;
+            @isset($header)
+                &lt;header class="bg-white shadow"&gt;
+                    &lt;div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8"&gt;
+                        {{ $header }}
+                    &lt;/div&gt;
+                &lt;/header&gt;
+            @endisset
+
+            &lt;!-- Page Content --&gt;
+            &lt;main&gt;
+                {{ $slot }}
+            &lt;/main&gt;
+        &lt;/div&gt;
+    &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+                <h4>
+                    File 2:
+                    <code>resources/views/layouts/navigation.blade.php</code>
+                    (MODIFY)
+                </h4>
+                <p>
+                    Tambahkan navigasi berbasis role (hanya bagian menu yang
+                    perlu diubah):
+                </p>
+                <pre><code class="language-html">&lt;!-- Di dalam &lt;div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex"&gt; --&gt;
+
+@if(auth()-&gt;user()-&gt;role === 'admin')
+    &lt;x-nav-link :href="route('admin.books.index')" :active="request()-&gt;routeIs('admin.books.*')"&gt;
+        {{ __('Data Buku') }}
+    &lt;/x-nav-link&gt;
+    &lt;x-nav-link :href="route('admin.transactions.index')" :active="request()-&gt;routeIs('admin.transactions.*')"&gt;
+        {{ __('Data Transaksi') }}
+    &lt;/x-nav-link&gt;
+    &lt;x-nav-link :href="route('admin.users.index')" :active="request()-&gt;routeIs('admin.users.*')"&gt;
+        {{ __('Data Pengguna') }}
+    &lt;/x-nav-link&gt;
+@else
+    &lt;x-nav-link :href="route('user.books.index')" :active="request()-&gt;routeIs('user.books.*')"&gt;
+        {{ __('Daftar Buku') }}
+    &lt;/x-nav-link&gt;
+    &lt;x-nav-link :href="route('user.transactions.index')" :active="request()-&gt;routeIs('user.transactions.*')"&gt;
+        {{ __('Pinjaman Saya') }}
+    &lt;/x-nav-link&gt;
+@endif</code></pre>
+
+                <blockquote class="note">
+                    <p class="alert-title">ℹ️ NOTE</p>
+                    <p>
+                        Tambahkan juga menu responsive yang sama di bagian
+                        <code>&lt;!-- Responsive Navigation Menu --&gt;</code>.
+                    </p>
+                </blockquote>
+
+                <hr />
+
+                <!-- ========== MODUL 10 ========== -->
+                <h3>Modul 10: Controller &amp; Views — CRUD Buku (Admin)</h3>
+                <p>
+                    <strong>Tujuan</strong>: Admin dapat mengelola data buku
+                    (Tambah, Lihat, Edit, Hapus).
+                </p>
+
+                <h4>
+                    File: <code>app/Http/Controllers/BookController.php</code>
+                </h4>
+                <pre><code class="language-bash">php artisan make:controller BookController --resource</code></pre>
+                <pre><code class="language-php">&lt;?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Book;
+use Illuminate\Http\Request;
+
+class BookController extends Controller
+{
+    public function index(Request $request)
+    {
+        $query = Book::query();
+
+        if ($request-&gt;has('search')) {
+            $search = $request-&gt;search;
+            $query-&gt;where(function($q) use ($search) {
+                $q-&gt;where('title', 'like', "%{$search}%")
+                  -&gt;orWhere('author', 'like', "%{$search}%")
+                  -&gt;orWhere('publisher', 'like', "%{$search}%");
+            });
+        }
+
+        $books = $query-&gt;get();
+        return view('admin.books.index', compact('books'));
+    }
+
+    public function create()
+    {
+        return view('admin.books.create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request-&gt;validate([
+            'title' =&gt; 'required',
+            'author' =&gt; 'required',
+            'publisher' =&gt; 'required',
+            'year' =&gt; 'required|integer',
+            'isbn' =&gt; 'required|unique:books,isbn',
+            'stock' =&gt; 'required|integer|min:0',
+            'cover' =&gt; 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        if ($request-&gt;hasFile('cover')) {
+            $validated['cover'] = $request-&gt;file('cover')-&gt;store('covers', 'public');
+        }
+
+        Book::create($validated);
+        return redirect()-&gt;route('admin.books.index')-&gt;with('success', 'Buku berhasil ditambahkan.');
+    }
+
+    public function edit(Book $book)
+    {
+        return view('admin.books.edit', compact('book'));
+    }
+
+    public function update(Request $request, Book $book)
+    {
+        $validated = $request-&gt;validate([
+            'title' =&gt; 'required',
+            'author' =&gt; 'required',
+            'publisher' =&gt; 'required',
+            'year' =&gt; 'required|integer',
+            'isbn' =&gt; 'required|unique:books,isbn,' . $book-&gt;id,
+            'stock' =&gt; 'required|integer|min:0',
+            'cover' =&gt; 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        if ($request-&gt;hasFile('cover')) {
+            if ($book-&gt;cover) {
+                \Illuminate\Support\Facades\Storage::disk('public')-&gt;delete($book-&gt;cover);
+            }
+            $validated['cover'] = $request-&gt;file('cover')-&gt;store('covers', 'public');
+        }
+
+        $book-&gt;update($validated);
+        return redirect()-&gt;route('admin.books.index')-&gt;with('success', 'Buku berhasil diperbarui.');
+    }
+
+    public function destroy(Book $book)
+    {
+        $book-&gt;delete();
+        return redirect()-&gt;route('admin.books.index')-&gt;with('success', 'Buku berhasil dihapus.');
+    }
+
+    // Untuk halaman User (Modul 13)
+    public function userIndex(Request $request)
+    {
+        $query = Book::query();
+
+        if ($request-&gt;has('search')) {
+            $search = $request-&gt;search;
+            $query-&gt;where(function($q) use ($search) {
+                $q-&gt;where('title', 'like', "%{$search}%")
+                  -&gt;orWhere('author', 'like', "%{$search}%");
+            });
+        }
+
+        $books = $query-&gt;get();
+        return view('user.books.index', compact('books'));
+    }
+}</code></pre>
+
+                <blockquote class="important">
+                    <p class="alert-title">❗ IMPORTANT</p>
+                    <p>
+                        <strong
+                            >Untuk upload cover buku, jalankan perintah ini
+                            SEKALI:</strong
+                        >
+                    </p>
+                    <pre><code class="language-bash">php artisan storage:link</code></pre>
+                    <p>
+                        Ini membuat symbolic link dari
+                        <code>storage/app/public</code> ke
+                        <code>public/storage</code>.
+                    </p>
+                </blockquote>
+
+                <h4>
+                    View:
+                    <code>resources/views/admin/books/index.blade.php</code>
+                </h4>
+                <pre><code class="language-html">&lt;x-app-layout&gt;
+    &lt;x-slot name="header"&gt;
+        &lt;h2 class="font-semibold text-xl text-gray-800 leading-tight"&gt;
+            {{ __('Kelola Data Buku') }}
+        &lt;/h2&gt;
+    &lt;/x-slot&gt;
+
+    &lt;div class="py-12"&gt;
+        &lt;div class="max-w-7xl mx-auto sm:px-6 lg:px-8"&gt;
+            &lt;div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4"&gt;
+
+                @if(session('success'))
+                    &lt;div class="alert alert-success"&gt;{{ session('success') }}&lt;/div&gt;
+                @endif
+                @if(session('error'))
+                    &lt;div class="alert alert-danger"&gt;{{ session('error') }}&lt;/div&gt;
+                @endif
+
+                &lt;div class="d-flex justify-content-between align-items-center mb-4"&gt;
+                    &lt;a href="{{ route('admin.books.create') }}" class="btn btn-primary d-flex align-items-center"&gt;
+                        &lt;i class="bi bi-plus-lg me-2"&gt;&lt;/i&gt; Tambah Buku
+                    &lt;/a&gt;
+
+                    &lt;form action="{{ route('admin.books.index') }}" method="GET" class="d-flex gap-2"&gt;
+                        &lt;div class="input-group"&gt;
+                            &lt;span class="input-group-text bg-white border-end-0"&gt;
+                                &lt;i class="bi bi-search text-muted"&gt;&lt;/i&gt;
+                            &lt;/span&gt;
+                            &lt;input type="text" name="search" class="form-control border-start-0 ps-0" placeholder="Cari judul, penulis..." value="{{ request('search') }}"&gt;
+                            @if(request('search'))
+                                &lt;a href="{{ route('admin.books.index') }}" class="btn btn-outline-secondary border-start-0"&gt;
+                                    &lt;i class="bi bi-x-lg"&gt;&lt;/i&gt;
+                                &lt;/a&gt;
+                            @endif
+                            &lt;button class="btn btn-primary px-4" type="submit"&gt;Cari&lt;/button&gt;
+                        &lt;/div&gt;
+                    &lt;/form&gt;
+                &lt;/div&gt;
+
+                &lt;table class="table table-bordered table-striped mt-3"&gt;
+                    &lt;thead&gt;
+                        &lt;tr class="text-center"&gt;
+                            &lt;th&gt;No&lt;/th&gt;&lt;th&gt;Sampul&lt;/th&gt;&lt;th&gt;Judul&lt;/th&gt;&lt;th&gt;Penulis&lt;/th&gt;
+                            &lt;th&gt;Penerbit&lt;/th&gt;&lt;th&gt;Tahun&lt;/th&gt;&lt;th&gt;Stok&lt;/th&gt;&lt;th&gt;Aksi&lt;/th&gt;
+                        &lt;/tr&gt;
+                    &lt;/thead&gt;
+                    &lt;tbody&gt;
+                        @forelse($books as $book)
+                        &lt;tr&gt;
+                            &lt;td class="text-center"&gt;{{ $loop-&gt;iteration }}&lt;/td&gt;
+                            &lt;td class="text-center"&gt;
+                                @if($book-&gt;cover)
+                                    &lt;img src="{{ asset('storage/' . $book-&gt;cover) }}" alt="Cover" width="50" class="img-thumbnail"&gt;
+                                @else
+                                    &lt;span class="text-muted"&gt;-&lt;/span&gt;
+                                @endif
+                            &lt;/td&gt;
+                            &lt;td&gt;{{ $book-&gt;title }}&lt;/td&gt;
+                            &lt;td&gt;{{ $book-&gt;author }}&lt;/td&gt;
+                            &lt;td&gt;{{ $book-&gt;publisher }}&lt;/td&gt;
+                            &lt;td class="text-center"&gt;{{ $book-&gt;year }}&lt;/td&gt;
+                            &lt;td class="text-center"&gt;{{ $book-&gt;stock }}&lt;/td&gt;
+                            &lt;td class="text-nowrap"&gt;
+                                &lt;div class="d-flex gap-2"&gt;
+                                    &lt;a href="{{ route('admin.books.edit', $book) }}" class="btn btn-sm btn-warning"&gt;
+                                        &lt;i class="bi bi-pencil-square"&gt;&lt;/i&gt;
+                                    &lt;/a&gt;
+                                    &lt;form action="{{ route('admin.books.destroy', $book) }}" method="POST" onsubmit="return confirm('Yakin hapus?');"&gt;
+                                        @csrf @method('DELETE')
+                                        &lt;button class="btn btn-sm btn-danger"&gt;&lt;i class="bi bi-trash"&gt;&lt;/i&gt;&lt;/button&gt;
+                                    &lt;/form&gt;
+                                &lt;/div&gt;
+                            &lt;/td&gt;
+                        &lt;/tr&gt;
+                        @empty
+                        &lt;tr&gt;&lt;td colspan="8" class="text-center"&gt;Belum ada data buku.&lt;/td&gt;&lt;/tr&gt;
+                        @endforelse
+                    &lt;/tbody&gt;
+                &lt;/table&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/x-app-layout&gt;</code></pre>
+
+                <h4>
+                    View:
+                    <code>resources/views/admin/books/create.blade.php</code>
+                </h4>
+                <pre><code class="language-html">&lt;x-app-layout&gt;
+    &lt;x-slot name="header"&gt;
+        &lt;h2 class="font-semibold text-xl text-gray-800 leading-tight"&gt;Tambah Buku&lt;/h2&gt;
+    &lt;/x-slot&gt;
+
+    &lt;div class="py-12"&gt;
+        &lt;div class="max-w-7xl mx-auto sm:px-6 lg:px-8"&gt;
+            &lt;div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4"&gt;
+
+                @if ($errors-&gt;any())
+                    &lt;div class="alert alert-danger"&gt;
+                        &lt;ul&gt;
+                            @foreach ($errors-&gt;all() as $error)
+                                &lt;li&gt;{{ $error }}&lt;/li&gt;
+                            @endforeach
+                        &lt;/ul&gt;
+                    &lt;/div&gt;
+                @endif
+
+                &lt;form action="{{ route('admin.books.store') }}" method="POST" enctype="multipart/form-data"&gt;
+                    @csrf
+                    &lt;div class="row"&gt;
+                        &lt;div class="col-md-8"&gt;
+                            &lt;div class="mb-3"&gt;
+                                &lt;label class="form-label"&gt;Judul&lt;/label&gt;
+                                &lt;input type="text" name="title" class="form-control" value="{{ old('title') }}" required&gt;
+                            &lt;/div&gt;
+                            &lt;div class="mb-3"&gt;
+                                &lt;label class="form-label"&gt;Penulis&lt;/label&gt;
+                                &lt;input type="text" name="author" class="form-control" value="{{ old('author') }}" required&gt;
+                            &lt;/div&gt;
+                            &lt;div class="mb-3"&gt;
+                                &lt;label class="form-label"&gt;Penerbit&lt;/label&gt;
+                                &lt;input type="text" name="publisher" class="form-control" value="{{ old('publisher') }}" required&gt;
+                            &lt;/div&gt;
+                            &lt;div class="row"&gt;
+                                &lt;div class="col-md-6"&gt;
+                                    &lt;div class="mb-3"&gt;
+                                        &lt;label class="form-label"&gt;Tahun&lt;/label&gt;
+                                        &lt;input type="number" name="year" class="form-control" value="{{ old('year') }}" required&gt;
+                                    &lt;/div&gt;
+                                &lt;/div&gt;
+                                &lt;div class="col-md-6"&gt;
+                                    &lt;div class="mb-3"&gt;
+                                        &lt;label class="form-label"&gt;ISBN&lt;/label&gt;
+                                        &lt;input type="text" name="isbn" class="form-control" value="{{ old('isbn') }}"&gt;
+                                    &lt;/div&gt;
+                                &lt;/div&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                        &lt;div class="col-md-4"&gt;
+                            &lt;div class="mb-3"&gt;
+                                &lt;label class="form-label"&gt;Sampul Buku&lt;/label&gt;
+                                &lt;input type="file" name="cover" class="form-control" accept="image/*"&gt;
+                                &lt;div class="form-text text-muted"&gt;Format: JPG, PNG, GIF. Max 2MB.&lt;/div&gt;
+                            &lt;/div&gt;
+                            &lt;div class="mb-3"&gt;
+                                &lt;label class="form-label"&gt;Stok&lt;/label&gt;
+                                &lt;input type="number" name="stock" class="form-control" value="{{ old('stock', 0) }}" min="0" required&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+
+                    &lt;button type="submit" class="btn btn-primary px-4"&gt;Simpan Buku&lt;/button&gt;
+                    &lt;a href="{{ route('admin.books.index') }}" class="btn btn-secondary"&gt;Kembali&lt;/a&gt;
+                &lt;/form&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/x-app-layout&gt;</code></pre>
+
+                <h4>
+                    View:
+                    <code>resources/views/admin/books/edit.blade.php</code>
+                </h4>
+                <pre><code class="language-html">&lt;x-app-layout&gt;
+    &lt;x-slot name="header"&gt;
+        &lt;h2 class="font-semibold text-xl text-gray-800 leading-tight"&gt;Edit Buku&lt;/h2&gt;
+    &lt;/x-slot&gt;
+
+    &lt;div class="py-12"&gt;
+        &lt;div class="max-w-7xl mx-auto sm:px-6 lg:px-8"&gt;
+            &lt;div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4"&gt;
+
+                @if ($errors-&gt;any())
+                    &lt;div class="alert alert-danger"&gt;
+                        &lt;ul&gt;
+                            @foreach ($errors-&gt;all() as $error)
+                                &lt;li&gt;{{ $error }}&lt;/li&gt;
+                            @endforeach
+                        &lt;/ul&gt;
+                    &lt;/div&gt;
+                @endif
+
+                &lt;form action="{{ route('admin.books.update', $book) }}" method="POST" enctype="multipart/form-data"&gt;
+                    @csrf @method('PUT')
+                    &lt;div class="row"&gt;
+                        &lt;div class="col-md-8"&gt;
+                            &lt;div class="mb-3"&gt;
+                                &lt;label class="form-label"&gt;Judul&lt;/label&gt;
+                                &lt;input type="text" name="title" class="form-control" value="{{ old('title', $book-&gt;title) }}" required&gt;
+                            &lt;/div&gt;
+                            &lt;div class="mb-3"&gt;
+                                &lt;label class="form-label"&gt;Penulis&lt;/label&gt;
+                                &lt;input type="text" name="author" class="form-control" value="{{ old('author', $book-&gt;author) }}" required&gt;
+                            &lt;/div&gt;
+                            &lt;div class="mb-3"&gt;
+                                &lt;label class="form-label"&gt;Penerbit&lt;/label&gt;
+                                &lt;input type="text" name="publisher" class="form-control" value="{{ old('publisher', $book-&gt;publisher) }}" required&gt;
+                            &lt;/div&gt;
+                            &lt;div class="row"&gt;
+                                &lt;div class="col-md-6"&gt;
+                                    &lt;div class="mb-3"&gt;
+                                        &lt;label class="form-label"&gt;Tahun&lt;/label&gt;
+                                        &lt;input type="number" name="year" class="form-control" value="{{ old('year', $book-&gt;year) }}" required&gt;
+                                    &lt;/div&gt;
+                                &lt;/div&gt;
+                                &lt;div class="col-md-6"&gt;
+                                    &lt;div class="mb-3"&gt;
+                                        &lt;label class="form-label"&gt;ISBN&lt;/label&gt;
+                                        &lt;input type="text" name="isbn" class="form-control" value="{{ old('isbn', $book-&gt;isbn) }}"&gt;
+                                    &lt;/div&gt;
+                                &lt;/div&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                        &lt;div class="col-md-4"&gt;
+                            &lt;div class="mb-3"&gt;
+                                &lt;label class="form-label"&gt;Sampul Saat Ini&lt;/label&gt;
+                                &lt;div class="mb-2"&gt;
+                                    @if($book-&gt;cover)
+                                        &lt;img src="{{ asset('storage/' . $book-&gt;cover) }}" alt="Cover" class="img-thumbnail" style="max-height: 200px;"&gt;
+                                    @else
+                                        &lt;img src="{{ asset('images/no-cover.png') }}" alt="No Cover" class="img-thumbnail opacity-50" style="max-height: 200px;"&gt;
+                                    @endif
+                                &lt;/div&gt;
+                                &lt;label class="form-label text-primary"&gt;Ganti Sampul&lt;/label&gt;
+                                &lt;input type="file" name="cover" class="form-control" accept="image/*"&gt;
+                            &lt;/div&gt;
+                            &lt;div class="mb-3"&gt;
+                                &lt;label class="form-label"&gt;Stok&lt;/label&gt;
+                                &lt;input type="number" name="stock" class="form-control" value="{{ old('stock', $book-&gt;stock) }}" min="0" required&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+
+                    &lt;button type="submit" class="btn btn-primary px-4"&gt;Simpan Perubahan&lt;/button&gt;
+                    &lt;a href="{{ route('admin.books.index') }}" class="btn btn-secondary"&gt;Kembali&lt;/a&gt;
+                &lt;/form&gt;
+
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/x-app-layout&gt;</code></pre>
+
+                <blockquote class="note">
+                    <p class="alert-title">ℹ️ NOTE</p>
+                    <p>
+                        Perbedaan utama dengan form <code>create</code>:
+                        menggunakan <code>@method('PUT')</code>, value input
+                        terisi dari <code>$book</code>, dan ada preview sampul
+                        saat ini.
+                    </p>
+                </blockquote>
+
+                <hr />
+
+                <!-- ========== MODUL 11 ========== -->
+                <h3>Modul 11: Controller &amp; Views — Kelola User (Admin)</h3>
+                <p>
+                    <strong>Tujuan</strong>: Admin dapat mengelola data pengguna
+                    (CRUD).
+                </p>
+
+                <h4>
+                    File: <code>app/Http/Controllers/UserController.php</code>
+                </h4>
+                <pre><code class="language-bash">php artisan make:controller UserController --resource</code></pre>
+                <pre><code class="language-php">&lt;?php
+
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules;
+
+class UserController extends Controller
+{
+    public function index(Request $request)
+    {
+        $query = User::query();
+
+        if ($request-&gt;has('role')) {
+            $query-&gt;where('role', $request-&gt;role);
+        }
+
+        if ($request-&gt;has('search')) {
+            $search = $request-&gt;search;
+            $query-&gt;where(function($q) use ($search) {
+                $q-&gt;where('name', 'like', "%{$search}%")
+                  -&gt;orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        $users = $query-&gt;get();
+        return view('admin.users.index', compact('users'));
+    }
+
+    public function create()
+    {
+        return view('admin.users.create');
+    }
+
+    public function store(Request $request)
+    {
+        $request-&gt;validate([
+            'name' =&gt; ['required', 'string', 'max:255'],
+            'email' =&gt; ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'password' =&gt; ['required', 'confirmed', Rules\Password::defaults()],
+            'role' =&gt; ['required', 'in:admin,user'],
+        ]);
+
+        User::create([
+            'name' =&gt; $request-&gt;name,
+            'email' =&gt; $request-&gt;email,
+            'password' =&gt; Hash::make($request-&gt;password),
+            'role' =&gt; $request-&gt;role,
+        ]);
+
+        return redirect()-&gt;route('admin.users.index')-&gt;with('success', 'Pengguna berhasil ditambahkan.');
+    }
+
+    public function edit(User $user)
+    {
+        return view('admin.users.edit', compact('user'));
+    }
+
+    public function update(Request $request, User $user)
+    {
+        $request-&gt;validate([
+            'name' =&gt; ['required', 'string', 'max:255'],
+            'email' =&gt; ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class.',email,'.$user-&gt;id],
+            'role' =&gt; ['required', 'in:admin,user'],
+        ]);
+
+        $data = [
+            'name' =&gt; $request-&gt;name,
+            'email' =&gt; $request-&gt;email,
+            'role' =&gt; $request-&gt;role,
+        ];
+
+        if ($request-&gt;filled('password')) {
+            $request-&gt;validate(['password' =&gt; ['confirmed', Rules\Password::defaults()]]);
+            $data['password'] = Hash::make($request-&gt;password);
+        }
+
+        $user-&gt;update($data);
+        return redirect()-&gt;route('admin.users.index')-&gt;with('success', 'Pengguna berhasil diubah.');
+    }
+
+    public function destroy(User $user)
+    {
+        if (auth()-&gt;id() === $user-&gt;id) {
+            return back()-&gt;with('error', 'Anda tidak dapat menghapus diri sendiri.');
+        }
+        $user-&gt;delete();
+        return redirect()-&gt;route('admin.users.index')-&gt;with('success', 'Pengguna berhasil dihapus.');
+    }
+}</code></pre>
+
+                <h4>
+                    View:
+                    <code>resources/views/admin/users/index.blade.php</code>
+                </h4>
+                <pre><code class="language-html">&lt;x-app-layout&gt;
+    &lt;x-slot name="header"&gt;
+        &lt;h2 class="font-semibold text-xl text-gray-800 leading-tight"&gt;Kelola Pengguna&lt;/h2&gt;
+    &lt;/x-slot&gt;
+
+    &lt;div class="py-12"&gt;
+        &lt;div class="max-w-7xl mx-auto sm:px-6 lg:px-8"&gt;
+            &lt;div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4"&gt;
+
+                @if(session('success'))
+                    &lt;div class="alert alert-success"&gt;{{ session('success') }}&lt;/div&gt;
+                @endif
+                @if(session('error'))
+                    &lt;div class="alert alert-danger"&gt;{{ session('error') }}&lt;/div&gt;
+                @endif
+
+                &lt;div class="row g-3 mb-4 align-items-center"&gt;
+                    &lt;div class="col-md-auto"&gt;
+                        &lt;a href="{{ route('admin.users.create') }}" class="btn btn-primary d-flex align-items-center"&gt;
+                            &lt;i class="bi bi-plus-lg me-2"&gt;&lt;/i&gt; Tambah Pengguna
+                        &lt;/a&gt;
+                    &lt;/div&gt;
+                    &lt;div class="col-md"&gt;
+                        &lt;form action="{{ route('admin.users.index') }}" method="GET" class="d-flex gap-2"&gt;
+                            @if(request('role'))
+                                &lt;input type="hidden" name="role" value="{{ request('role') }}"&gt;
+                            @endif
+                            &lt;div class="input-group"&gt;
+                                &lt;span class="input-group-text bg-white border-end-0"&gt;
+                                    &lt;i class="bi bi-search text-muted"&gt;&lt;/i&gt;
+                                &lt;/span&gt;
+                                &lt;input type="text" name="search" class="form-control border-start-0 ps-0" placeholder="Cari nama atau email..." value="{{ request('search') }}"&gt;
+                                @if(request('search'))
+                                    &lt;a href="{{ route('admin.users.index', request()-&gt;only('role')) }}" class="btn btn-outline-secondary border-start-0"&gt;
+                                        &lt;i class="bi bi-x-lg"&gt;&lt;/i&gt;
+                                    &lt;/a&gt;
+                                @endif
+                                &lt;button class="btn btn-primary px-4" type="submit"&gt;Cari&lt;/button&gt;
+                            &lt;/div&gt;
+                        &lt;/form&gt;
+                    &lt;/div&gt;
+                    &lt;div class="col-md-auto"&gt;
+                        &lt;ul class="nav nav-pills bg-light p-1 rounded-3"&gt;
+                            &lt;li class="nav-item"&gt;
+                                &lt;a class="nav-link {{ !request('role') ? 'active px-4' : 'text-muted' }}" href="{{ route('admin.users.index', request()-&gt;only('search')) }}"&gt;Semua&lt;/a&gt;
+                            &lt;/li&gt;
+                            &lt;li class="nav-item"&gt;
+                                &lt;a class="nav-link {{ request('role') == 'admin' ? 'active px-4' : 'text-muted' }}" href="{{ route('admin.users.index', array_merge(request()-&gt;only('search'), ['role' =&gt; 'admin'])) }}"&gt;Admin&lt;/a&gt;
+                            &lt;/li&gt;
+                            &lt;li class="nav-item"&gt;
+                                &lt;a class="nav-link {{ request('role') == 'user' ? 'active px-4' : 'text-muted' }}" href="{{ route('admin.users.index', array_merge(request()-&gt;only('search'), ['role' =&gt; 'user'])) }}"&gt;Anggota&lt;/a&gt;
+                            &lt;/li&gt;
+                        &lt;/ul&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+
+                &lt;table class="table table-bordered table-striped mt-3"&gt;
+                    &lt;thead&gt;
+                        &lt;tr class="text-center"&gt;
+                            &lt;th&gt;No&lt;/th&gt;&lt;th&gt;Nama&lt;/th&gt;&lt;th&gt;Email&lt;/th&gt;&lt;th&gt;Role&lt;/th&gt;&lt;th&gt;Aksi&lt;/th&gt;
+                        &lt;/tr&gt;
+                    &lt;/thead&gt;
+                    &lt;tbody&gt;
+                        @foreach($users as $user)
+                        &lt;tr&gt;
+                            &lt;td class="text-center"&gt;{{ $loop-&gt;iteration }}&lt;/td&gt;
+                            &lt;td&gt;{{ $user-&gt;name }}&lt;/td&gt;
+                            &lt;td&gt;{{ $user-&gt;email }}&lt;/td&gt;
+                            &lt;td class="text-center"&gt;&lt;span class="badge {{ $user-&gt;role == 'admin' ? 'bg-danger' : 'bg-primary' }}"&gt;{{ ucfirst($user-&gt;role) }}&lt;/span&gt;&lt;/td&gt;
+                            &lt;td class="text-nowrap"&gt;
+                                &lt;div class="d-flex justify-content-center gap-2"&gt;
+                                    &lt;a href="{{ route('admin.users.edit', $user) }}" class="btn btn-sm btn-warning"&gt;
+                                        &lt;i class="bi bi-pencil-square"&gt;&lt;/i&gt;
+                                    &lt;/a&gt;
+                                    &lt;form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin hapus?');"&gt;
+                                        @csrf @method('DELETE')
+                                        &lt;button class="btn btn-sm btn-danger"&gt;&lt;i class="bi bi-trash"&gt;&lt;/i&gt;&lt;/button&gt;
+                                    &lt;/form&gt;
+                                &lt;/div&gt;
+                            &lt;/td&gt;
+                        &lt;/tr&gt;
+                        @endforeach
+                    &lt;/tbody&gt;
+                &lt;/table&gt;
+
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/x-app-layout&gt;</code></pre>
+
+                <h4>
+                    View:
+                    <code>resources/views/admin/users/create.blade.php</code>
+                </h4>
+                <pre><code class="language-html">&lt;x-app-layout&gt;
+    &lt;x-slot name="header"&gt;
+        &lt;h2 class="font-semibold text-xl text-gray-800 leading-tight"&gt;Tambah Pengguna&lt;/h2&gt;
+    &lt;/x-slot&gt;
+
+    &lt;div class="py-12"&gt;
+        &lt;div class="max-w-7xl mx-auto sm:px-6 lg:px-8"&gt;
+            &lt;div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4"&gt;
+
+                @if ($errors-&gt;any())
+                    &lt;div class="alert alert-danger"&gt;
+                        &lt;ul&gt;
+                            @foreach ($errors-&gt;all() as $error)
+                                &lt;li&gt;{{ $error }}&lt;/li&gt;
+                            @endforeach
+                        &lt;/ul&gt;
+                    &lt;/div&gt;
+                @endif
+
+                &lt;form action="{{ route('admin.users.store') }}" method="POST"&gt;
+                    @csrf
+                    &lt;div class="mb-3"&gt;
+                        &lt;label class="form-label"&gt;Nama&lt;/label&gt;
+                        &lt;input type="text" name="name" class="form-control" value="{{ old('name') }}" required&gt;
+                    &lt;/div&gt;
+                    &lt;div class="mb-3"&gt;
+                        &lt;label class="form-label"&gt;Email&lt;/label&gt;
+                        &lt;input type="email" name="email" class="form-control" value="{{ old('email') }}" required&gt;
+                    &lt;/div&gt;
+                    &lt;div class="mb-3"&gt;
+                        &lt;label class="form-label"&gt;Password&lt;/label&gt;
+                        &lt;input type="password" name="password" class="form-control" required&gt;
+                    &lt;/div&gt;
+                    &lt;div class="mb-3"&gt;
+                        &lt;label class="form-label"&gt;Konfirmasi Password&lt;/label&gt;
+                        &lt;input type="password" name="password_confirmation" class="form-control" required&gt;
+                    &lt;/div&gt;
+                    &lt;div class="mb-3"&gt;
+                        &lt;label class="form-label"&gt;Role&lt;/label&gt;
+                        &lt;select name="role" class="form-select"&gt;
+                            &lt;option value="user" {{ old('role') == 'user' ? 'selected' : '' }}&gt;User&lt;/option&gt;
+                            &lt;option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}&gt;Admin&lt;/option&gt;
+                        &lt;/select&gt;
+                    &lt;/div&gt;
+                    &lt;button type="submit" class="btn btn-primary"&gt;Simpan&lt;/button&gt;
+                    &lt;a href="{{ route('admin.users.index') }}" class="btn btn-secondary"&gt;Kembali&lt;/a&gt;
+                &lt;/form&gt;
+
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/x-app-layout&gt;</code></pre>
+
+                <h4>
+                    View:
+                    <code>resources/views/admin/users/edit.blade.php</code>
+                </h4>
+                <pre><code class="language-html">&lt;x-app-layout&gt;
+    &lt;x-slot name="header"&gt;
+        &lt;h2 class="font-semibold text-xl text-gray-800 leading-tight"&gt;Edit Pengguna&lt;/h2&gt;
+    &lt;/x-slot&gt;
+
+    &lt;div class="py-12"&gt;
+        &lt;div class="max-w-7xl mx-auto sm:px-6 lg:px-8"&gt;
+            &lt;div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4"&gt;
+
+                @if ($errors-&gt;any())
+                    &lt;div class="alert alert-danger"&gt;
+                        &lt;ul&gt;
+                            @foreach ($errors-&gt;all() as $error)
+                                &lt;li&gt;{{ $error }}&lt;/li&gt;
+                            @endforeach
+                        &lt;/ul&gt;
+                    &lt;/div&gt;
+                @endif
+
+                &lt;form action="{{ route('admin.users.update', $user) }}" method="POST"&gt;
+                    @csrf @method('PUT')
+                    &lt;div class="mb-3"&gt;
+                        &lt;label class="form-label"&gt;Nama&lt;/label&gt;
+                        &lt;input type="text" name="name" class="form-control" value="{{ old('name', $user-&gt;name) }}" required&gt;
+                    &lt;/div&gt;
+                    &lt;div class="mb-3"&gt;
+                        &lt;label class="form-label"&gt;Email&lt;/label&gt;
+                        &lt;input type="email" name="email" class="form-control" value="{{ old('email', $user-&gt;email) }}" required&gt;
+                    &lt;/div&gt;
+                    &lt;div class="mb-3"&gt;
+                        &lt;label class="form-label"&gt;Password (Biarkan kosong jika tidak ingin mengubah)&lt;/label&gt;
+                        &lt;input type="password" name="password" class="form-control"&gt;
+                    &lt;/div&gt;
+                    &lt;div class="mb-3"&gt;
+                        &lt;label class="form-label"&gt;Konfirmasi Password&lt;/label&gt;
+                        &lt;input type="password" name="password_confirmation" class="form-control"&gt;
+                    &lt;/div&gt;
+                    &lt;div class="mb-3"&gt;
+                        &lt;label class="form-label"&gt;Role&lt;/label&gt;
+                        &lt;select name="role" class="form-select"&gt;
+                            &lt;option value="user" {{ old('role', $user-&gt;role) == 'user' ? 'selected' : '' }}&gt;User&lt;/option&gt;
+                            &lt;option value="admin" {{ old('role', $user-&gt;role) == 'admin' ? 'selected' : '' }}&gt;Admin&lt;/option&gt;
+                        &lt;/select&gt;
+                    &lt;/div&gt;
+                    &lt;button type="submit" class="btn btn-primary"&gt;Simpan&lt;/button&gt;
+                    &lt;a href="{{ route('admin.users.index') }}" class="btn btn-secondary"&gt;Kembali&lt;/a&gt;
+                &lt;/form&gt;
+
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/x-app-layout&gt;</code></pre>
+
+                <hr />
+
+                <!-- ========== MODUL 12 ========== -->
+                <h3>Modul 12: Controller &amp; Views — Transaksi Admin</h3>
+                <p>
+                    <strong>Tujuan</strong>: Admin mengelola transaksi
+                    peminjaman buku.
+                </p>
+
+                <h4>
+                    File:
+                    <code>app/Http/Controllers/TransactionController.php</code>
+                </h4>
+                <pre><code class="language-bash">php artisan make:controller TransactionController --resource</code></pre>
+                <pre><code class="language-php">&lt;?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Transaction;
+use App\Models\Book;
+use Illuminate\Http\Request;
+
+class TransactionController extends Controller
+{
+    // Admin: list semua transaksi
+    public function index(Request $request)
+    {
+        $query = Transaction::with(['user', 'book']);
+
+        if ($request-&gt;has('search')) {
+            $search = $request-&gt;search;
+            $query-&gt;where(function($q) use ($search) {
+                $q-&gt;whereHas('book', function($bq) use ($search) {
+                    $bq-&gt;where('title', 'like', "%{$search}%");
+                })-&gt;orWhereHas('user', function($uq) use ($search) {
+                    $uq-&gt;where('name', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        $transactions = $query-&gt;get();
+        return view('admin.transactions.index', compact('transactions'));
+    }
+
+    // Admin: form untuk membuat transaksi manual
+    public function create()
+    {
+        $books = Book::where('stock', '&gt;', 0)-&gt;get();
+        $users = \App\Models\User::where('role', 'user')-&gt;get();
+        return view('admin.transactions.create', compact('books', 'users'));
+    }
+
+    // Admin: simpan transaksi baru
+    public function store(Request $request)
+    {
+        $validated = $request-&gt;validate([
+            'user_id' =&gt; 'required|exists:users,id',
+            'book_id' =&gt; 'required|exists:books,id',
+            'borrow_date' =&gt; 'required|date',
+            'due_date' =&gt; 'required|date|after_or_equal:borrow_date',
+        ]);
+
+        $book = Book::find($request-&gt;book_id);
+        if ($book-&gt;stock &lt; 1) {
+            return back()-&gt;with('error', 'Stok buku habis.');
+        }
+
+        $book-&gt;decrement('stock');
+        Transaction::create($validated);
+
+        return redirect()-&gt;route('admin.transactions.index')-&gt;with('success', 'Transaksi berhasil ditambahkan.');
+    }
+
+    // Admin: edit/update status transaksi
+    public function edit(Transaction $transaction)
+    {
+        return view('admin.transactions.edit', compact('transaction'));
+    }
+
+    public function update(Request $request, Transaction $transaction)
+    {
+        $validated = $request-&gt;validate([
+            'return_date' =&gt; 'nullable|date|after_or_equal:borrow_date',
+            'status' =&gt; 'required|in:borrowed,returned',
+        ]);
+
+        // Logika stok: kembalikan stok saat status diubah ke "returned"
+        if ($transaction-&gt;status === 'borrowed' &amp;&amp; $request-&gt;status === 'returned') {
+            $transaction-&gt;book-&gt;increment('stock');
+            if (empty($validated['return_date'])) {
+                $validated['return_date'] = now()-&gt;toDateString();
+            }
+        } elseif ($transaction-&gt;status === 'pending' &amp;&amp; $request-&gt;status === 'returned') {
+            $transaction-&gt;book-&gt;increment('stock');
+            if (empty($validated['return_date'])) {
+                $validated['return_date'] = now()-&gt;toDateString();
+            }
+        }
+
+        $transaction-&gt;update($validated);
+        return redirect()-&gt;route('admin.transactions.index')-&gt;with('success', 'Transaksi diperbarui.');
+    }
+
+    public function destroy(Transaction $transaction)
+    {
+        if ($transaction-&gt;status === 'borrowed') {
+            $transaction-&gt;book-&gt;increment('stock');
+        }
+        $transaction-&gt;delete();
+        return redirect()-&gt;route('admin.transactions.index')-&gt;with('success', 'Transaksi dihapus.');
+    }
+
+    // ===== USER LOGIC (Modul 14) =====
+
+    // User: list peminjaman sendiri
+    public function userIndex(Request $request)
+    {
+        $query = Transaction::with('book')
+            -&gt;where('user_id', auth()-&gt;id());
+
+        if ($request-&gt;has('search')) {
+            $search = $request-&gt;search;
+            $query-&gt;whereHas('book', function($q) use ($search) {
+                $q-&gt;where('title', 'like', "%{$search}%");
+            });
+        }
+
+        $transactions = $query-&gt;get();
+        return view('user.transactions.index', compact('transactions'));
+    }
+
+    // User: pinjam buku
+    public function storeUser(Request $request)
+    {
+        $request-&gt;validate(['book_id' =&gt; 'required|exists:books,id']);
+
+        $book = Book::find($request-&gt;book_id);
+
+        if ($book-&gt;stock &lt; 1) {
+            return back()-&gt;with('error', 'Stok buku habis.');
+        }
+
+        // Cek apakah user sedang meminjam buku yang sama
+        $activeBorrow = Transaction::where('user_id', auth()-&gt;id())
+            -&gt;where('book_id', $book-&gt;id)
+            -&gt;where('status', 'borrowed')
+            -&gt;first();
+
+        if ($activeBorrow) {
+            return back()-&gt;with('error', 'Anda masih meminjam buku ini.');
+        }
+
+        $book-&gt;decrement('stock');
+        Transaction::create([
+            'user_id' =&gt; auth()-&gt;id(),
+            'book_id' =&gt; $book-&gt;id,
+            'borrow_date' =&gt; now()-&gt;toDateString(),
+            'due_date' =&gt; now()-&gt;addDays(7)-&gt;toDateString(),
+            'status' =&gt; 'borrowed'
+        ]);
+
+        return redirect()-&gt;route('user.transactions.index')-&gt;with('success', 'Buku berhasil dipinjam.');
+    }
+
+    // User: ajukan pengembalian
+    public function returnBook(Transaction $transaction)
+    {
+        if ($transaction-&gt;user_id !== auth()-&gt;id() || $transaction-&gt;status !== 'borrowed') {
+            return back()-&gt;with('error', 'Aksi tidak diizinkan.');
+        }
+
+        $transaction-&gt;update([
+            'status' =&gt; 'pending',
+            'return_date' =&gt; now()-&gt;toDateString()
+        ]);
+
+        return back()-&gt;with('success', 'Permintaan pengembalian dikirim. Menunggu konfirmasi admin.');
+    }
+}</code></pre>
+
+                <blockquote class="important">
+                    <p class="alert-title">❗ IMPORTANT</p>
+                    <p><strong>Alur Peminjaman Buku:</strong></p>
+                    <ul>
+                        <li>
+                            User klik "Pinjam" → status = <code>borrowed</code>,
+                            stok berkurang
+                        </li>
+                        <li>
+                            User klik "Kembalikan" → status =
+                            <code>pending</code> (menunggu admin)
+                        </li>
+                        <li>
+                            Admin klik "Konfirmasi" → status =
+                            <code>returned</code>, stok bertambah kembali
+                        </li>
+                    </ul>
+                </blockquote>
+
+                <h4>
+                    View:
+                    <code
+                        >resources/views/admin/transactions/index.blade.php</code
+                    >
+                </h4>
+                <pre><code class="language-html">&lt;x-app-layout&gt;
+    &lt;x-slot name="header"&gt;
+        &lt;h2 class="font-semibold text-xl text-gray-800 leading-tight"&gt;Kelola Transaksi Peminjaman&lt;/h2&gt;
+    &lt;/x-slot&gt;
+
+    &lt;div class="py-12"&gt;
+        &lt;div class="max-w-7xl mx-auto sm:px-6 lg:px-8"&gt;
+            &lt;div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4"&gt;
+
+                @if(session('success'))
+                    &lt;div class="alert alert-success"&gt;{{ session('success') }}&lt;/div&gt;
+                @endif
+                @if(session('error'))
+                    &lt;div class="alert alert-danger"&gt;{{ session('error') }}&lt;/div&gt;
+                @endif
+
+                &lt;div class="d-flex justify-content-between align-items-center mb-4"&gt;
+                    &lt;a href="{{ route('admin.transactions.create') }}" class="btn btn-primary d-flex align-items-center"&gt;
+                        &lt;i class="bi bi-plus-lg me-2"&gt;&lt;/i&gt; Tambah Transaksi
+                    &lt;/a&gt;
+
+                    &lt;form action="{{ route('admin.transactions.index') }}" method="GET" class="d-flex gap-2"&gt;
+                        &lt;div class="input-group"&gt;
+                            &lt;span class="input-group-text bg-white border-end-0"&gt;
+                                &lt;i class="bi bi-search text-muted"&gt;&lt;/i&gt;
+                            &lt;/span&gt;
+                            &lt;input type="text" name="search" class="form-control border-start-0 ps-0" placeholder="Cari peminjam, buku..." value="{{ request('search') }}"&gt;
+                            @if(request('search'))
+                                &lt;a href="{{ route('admin.transactions.index') }}" class="btn btn-outline-secondary border-start-0"&gt;
+                                    &lt;i class="bi bi-x-lg"&gt;&lt;/i&gt;
+                                &lt;/a&gt;
+                            @endif
+                            &lt;button class="btn btn-primary px-4" type="submit"&gt;Cari&lt;/button&gt;
+                        &lt;/div&gt;
+                    &lt;/form&gt;
+                &lt;/div&gt;
+
+                &lt;table class="table table-bordered table-striped mt-3"&gt;
+                    &lt;thead&gt;
+                        &lt;tr class="text-center"&gt;
+                            &lt;th&gt;No&lt;/th&gt;&lt;th&gt;Peminjam&lt;/th&gt;&lt;th&gt;Buku&lt;/th&gt;&lt;th&gt;Tanggal Pinjam&lt;/th&gt;
+                            &lt;th&gt;Jatuh Tempo&lt;/th&gt;&lt;th&gt;Tanggal Kembali&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;&lt;th&gt;Aksi&lt;/th&gt;
+                        &lt;/tr&gt;
+                    &lt;/thead&gt;
+                    &lt;tbody&gt;
+                        @foreach($transactions as $transaction)
+                        &lt;tr&gt;
+                            &lt;td class="text-center"&gt;{{ $loop-&gt;iteration }}&lt;/td&gt;
+                            &lt;td&gt;{{ $transaction-&gt;user-&gt;name }}&lt;/td&gt;
+                            &lt;td&gt;{{ $transaction-&gt;book-&gt;title }}&lt;/td&gt;
+                            &lt;td class="text-center"&gt;{{ $transaction-&gt;borrow_date }}&lt;/td&gt;
+                            &lt;td class="text-center"&gt;{{ $transaction-&gt;due_date }}&lt;/td&gt;
+                            &lt;td class="text-center"&gt;{{ $transaction-&gt;return_date ?? '-' }}&lt;/td&gt;
+                            &lt;td&gt;
+                                @if($transaction-&gt;status == 'borrowed')
+                                    &lt;span class="badge bg-warning"&gt;Dipinjam&lt;/span&gt;
+                                @elseif($transaction-&gt;status == 'pending')
+                                    &lt;span class="badge bg-info"&gt;Menunggu Persetujuan&lt;/span&gt;
+                                @else
+                                    &lt;span class="badge bg-success"&gt;Dikembalikan&lt;/span&gt;
+                                @endif
+                            &lt;/td&gt;
+                            &lt;td class="text-nowrap"&gt;
+                                &lt;div class="d-flex gap-2"&gt;
+                                    @if($transaction-&gt;status == 'pending')
+                                        &lt;form action="{{ route('admin.transactions.update', $transaction) }}" method="POST" class="d-inline"&gt;
+                                            @csrf @method('PUT')
+                                            &lt;input type="hidden" name="status" value="returned"&gt;
+                                            &lt;button type="submit" class="btn btn-sm btn-success" title="Konfirmasi Kembali"&gt;
+                                                &lt;i class="bi bi-check-circle"&gt;&lt;/i&gt;
+                                            &lt;/button&gt;
+                                        &lt;/form&gt;
+                                    @endif
+                                    &lt;a href="{{ route('admin.transactions.edit', $transaction) }}" class="btn btn-sm btn-warning"&gt;
+                                        &lt;i class="bi bi-pencil-square"&gt;&lt;/i&gt;
+                                    &lt;/a&gt;
+                                    &lt;form action="{{ route('admin.transactions.destroy', $transaction) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin hapus?');"&gt;
+                                        @csrf @method('DELETE')
+                                        &lt;button class="btn btn-sm btn-danger"&gt;&lt;i class="bi bi-trash"&gt;&lt;/i&gt;&lt;/button&gt;
+                                    &lt;/form&gt;
+                                &lt;/div&gt;
+                            &lt;/td&gt;
+                        &lt;/tr&gt;
+                        @endforeach
+                    &lt;/tbody&gt;
+                &lt;/table&gt;
+
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/x-app-layout&gt;</code></pre>
+
+                <h4>
+                    View:
+                    <code
+                        >resources/views/admin/transactions/create.blade.php</code
+                    >
+                </h4>
+                <pre><code class="language-html">&lt;x-app-layout&gt;
+    &lt;x-slot name="header"&gt;
+        &lt;h2 class="font-semibold text-xl text-gray-800 leading-tight"&gt;Tambah Transaksi Manual&lt;/h2&gt;
+    &lt;/x-slot&gt;
+
+    &lt;div class="py-12"&gt;
+        &lt;div class="max-w-7xl mx-auto sm:px-6 lg:px-8"&gt;
+            &lt;div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4"&gt;
+
+                @if ($errors-&gt;any())
+                    &lt;div class="alert alert-danger"&gt;
+                        &lt;ul&gt;
+                            @foreach ($errors-&gt;all() as $error)
+                                &lt;li&gt;{{ $error }}&lt;/li&gt;
+                            @endforeach
+                        &lt;/ul&gt;
+                    &lt;/div&gt;
+                @endif
+                @if(session('error'))
+                    &lt;div class="alert alert-danger"&gt;{{ session('error') }}&lt;/div&gt;
+                @endif
+
+                &lt;form action="{{ route('admin.transactions.store') }}" method="POST"&gt;
+                    @csrf
+                    &lt;div class="mb-3"&gt;
+                        &lt;label class="form-label"&gt;Peminjam&lt;/label&gt;
+                        &lt;select name="user_id" class="form-select" required&gt;
+                            &lt;option value=""&gt;Pilih Anggota&lt;/option&gt;
+                            @foreach($users as $user)
+                                &lt;option value="{{ $user-&gt;id }}" {{ old('user_id') == $user-&gt;id ? 'selected' : '' }}&gt;{{ $user-&gt;name }}&lt;/option&gt;
+                            @endforeach
+                        &lt;/select&gt;
+                    &lt;/div&gt;
+
+                    &lt;div class="mb-3"&gt;
+                        &lt;label class="form-label"&gt;Buku&lt;/label&gt;
+                        &lt;select name="book_id" class="form-select" required&gt;
+                            &lt;option value=""&gt;Pilih Buku&lt;/option&gt;
+                            @foreach($books as $book)
+                                &lt;option value="{{ $book-&gt;id }}" {{ old('book_id') == $book-&gt;id ? 'selected' : '' }}&gt;{{ $book-&gt;title }} (Stok: {{ $book-&gt;stock }})&lt;/option&gt;
+                            @endforeach
+                        &lt;/select&gt;
+                    &lt;/div&gt;
+
+                    &lt;div class="mb-3"&gt;
+                        &lt;label class="form-label"&gt;Tanggal Pinjam&lt;/label&gt;
+                        &lt;input type="date" name="borrow_date" class="form-control" value="{{ old('borrow_date', date('Y-m-d')) }}" required&gt;
+                    &lt;/div&gt;
+
+                    &lt;div class="mb-3"&gt;
+                        &lt;label class="form-label"&gt;Tanggal Jatuh Tempo&lt;/label&gt;
+                        &lt;input type="date" name="due_date" class="form-control" value="{{ old('due_date', date('Y-m-d', strtotime('+7 days'))) }}" required&gt;
+                    &lt;/div&gt;
+
+                    &lt;button type="submit" class="btn btn-primary"&gt;Simpan&lt;/button&gt;
+                    &lt;a href="{{ route('admin.transactions.index') }}" class="btn btn-secondary"&gt;Kembali&lt;/a&gt;
+                &lt;/form&gt;
+
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/x-app-layout&gt;</code></pre>
+
+                <h4>
+                    View:
+                    <code
+                        >resources/views/admin/transactions/edit.blade.php</code
+                    >
+                </h4>
+                <pre><code class="language-html">&lt;x-app-layout&gt;
+    &lt;x-slot name="header"&gt;
+        &lt;h2 class="font-semibold text-xl text-gray-800 leading-tight"&gt;Edit Transaksi (Update Status)&lt;/h2&gt;
+    &lt;/x-slot&gt;
+
+    &lt;div class="py-12"&gt;
+        &lt;div class="max-w-7xl mx-auto sm:px-6 lg:px-8"&gt;
+            &lt;div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4"&gt;
+
+                @if ($errors-&gt;any())
+                    &lt;div class="alert alert-danger"&gt;
+                        &lt;ul&gt;
+                            @foreach ($errors-&gt;all() as $error)
+                                &lt;li&gt;{{ $error }}&lt;/li&gt;
+                            @endforeach
+                        &lt;/ul&gt;
+                    &lt;/div&gt;
+                @endif
+                @if(session('error'))
+                    &lt;div class="alert alert-danger"&gt;{{ session('error') }}&lt;/div&gt;
+                @endif
+
+                &lt;form action="{{ route('admin.transactions.update', $transaction) }}" method="POST"&gt;
+                    @csrf @method('PUT')
+
+                    &lt;div class="mb-3"&gt;
+                        &lt;label class="form-label"&gt;Peminjam&lt;/label&gt;
+                        &lt;input type="text" class="form-control" value="{{ $transaction-&gt;user-&gt;name }}" readonly&gt;
+                    &lt;/div&gt;
+
+                    &lt;div class="mb-3"&gt;
+                        &lt;label class="form-label"&gt;Buku&lt;/label&gt;
+                        &lt;input type="text" class="form-control" value="{{ $transaction-&gt;book-&gt;title }}" readonly&gt;
+                    &lt;/div&gt;
+
+                    &lt;div class="mb-3"&gt;
+                        &lt;label class="form-label"&gt;Tanggal Pinjam&lt;/label&gt;
+                        &lt;input type="date" class="form-control" value="{{ $transaction-&gt;borrow_date }}" readonly&gt;
+                    &lt;/div&gt;
+
+                    &lt;div class="mb-3"&gt;
+                        &lt;label class="form-label"&gt;Status&lt;/label&gt;
+                        &lt;select name="status" class="form-select" required&gt;
+                            &lt;option value="borrowed" {{ $transaction-&gt;status == 'borrowed' ? 'selected' : '' }}&gt;Dipinjam&lt;/option&gt;
+                            &lt;option value="pending" {{ $transaction-&gt;status == 'pending' ? 'selected' : '' }}&gt;Menunggu Persetujuan&lt;/option&gt;
+                            &lt;option value="returned" {{ $transaction-&gt;status == 'returned' ? 'selected' : '' }}&gt;Dikembalikan&lt;/option&gt;
+                        &lt;/select&gt;
+                    &lt;/div&gt;
+
+                    &lt;div class="mb-3"&gt;
+                        &lt;label class="form-label"&gt;Tanggal Kembali (Otomatis terisi saat status Dikembalikan)&lt;/label&gt;
+                        &lt;input type="date" name="return_date" class="form-control" value="{{ old('return_date', $transaction-&gt;return_date) }}"&gt;
+                    &lt;/div&gt;
+
+                    &lt;button type="submit" class="btn btn-primary"&gt;Simpan&lt;/button&gt;
+                    &lt;a href="{{ route('admin.transactions.index') }}" class="btn btn-secondary"&gt;Kembali&lt;/a&gt;
+                &lt;/form&gt;
+
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/x-app-layout&gt;</code></pre>
+
+                <hr />
+
+                <!-- ========== MODUL 13 ========== -->
+                <h3>Modul 13: Halaman Katalog Buku (User)</h3>
+                <p>
+                    <strong>Tujuan</strong>: User dapat melihat daftar buku yang
+                    tersedia dalam tampilan Card.
+                </p>
+
+                <h4>
+                    View:
+                    <code>resources/views/user/books/index.blade.php</code>
+                </h4>
+                <pre><code class="language-html">&lt;x-app-layout&gt;
+    &lt;x-slot name="header"&gt;
+        &lt;h2 class="font-semibold text-xl text-gray-800 leading-tight"&gt;Daftar Buku Tersedia&lt;/h2&gt;
+    &lt;/x-slot&gt;
+
+    &lt;div class="py-12"&gt;
+        &lt;div class="max-w-7xl mx-auto sm:px-6 lg:px-8"&gt;
+            &lt;div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4"&gt;
+
+                @if(session('success'))
+                    &lt;div class="alert alert-success"&gt;{{ session('success') }}&lt;/div&gt;
+                @endif
+                @if(session('error'))
+                    &lt;div class="alert alert-danger"&gt;{{ session('error') }}&lt;/div&gt;
+                @endif
+
+                &lt;!-- Search Bar --&gt;
+                &lt;div class="row mb-4 justify-content-center"&gt;
+                    &lt;div class="col-md-8 col-lg-6"&gt;
+                        &lt;form action="{{ route('user.books.index') }}" method="GET"&gt;
+                            &lt;div class="input-group shadow-sm rounded-pill overflow-hidden border"&gt;
+                                &lt;span class="input-group-text bg-white border-0 ps-4"&gt;
+                                    &lt;i class="bi bi-search text-muted"&gt;&lt;/i&gt;
+                                &lt;/span&gt;
+                                &lt;input type="text" name="search" class="form-control border-0 py-3 ps-2 shadow-none" placeholder="Cari judul buku atau penulis..." value="{{ request('search') }}"&gt;
+                                &lt;button class="btn btn-primary px-4 fw-bold" type="submit"&gt;Cari&lt;/button&gt;
+                            &lt;/div&gt;
+                        &lt;/form&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+
+                &lt;!-- Card Grid Buku --&gt;
+                &lt;div class="row g-4"&gt;
+                    @forelse($books as $book)
+                        &lt;div class="col-6 col-md-4 col-lg-3"&gt;
+                            &lt;div class="card h-100 border-0 shadow-sm"&gt;
+                                &lt;div class="position-relative"&gt;
+                                    @if($book-&gt;cover)
+                                        &lt;div class="bg-light d-flex align-items-center justify-content-center" style="height: 280px;"&gt;
+                                            &lt;img src="{{ asset('storage/' . $book-&gt;cover) }}"
+                                                 class="card-img-top" alt="{{ $book-&gt;title }}"
+                                                 style="max-height: 280px; width: auto; max-width: 100%; object-fit: contain;"&gt;
+                                        &lt;/div&gt;
+                                    @else
+                                        &lt;div class="bg-light d-flex align-items-center justify-content-center" style="height: 280px;"&gt;
+                                            &lt;i class="bi bi-book text-muted" style="font-size: 4rem;"&gt;&lt;/i&gt;
+                                        &lt;/div&gt;
+                                    @endif
+                                    @if($book-&gt;stock &gt; 0)
+                                        &lt;span class="badge bg-success position-absolute top-0 end-0 m-2"&gt;Tersedia: {{ $book-&gt;stock }}&lt;/span&gt;
+                                    @else
+                                        &lt;span class="badge bg-danger position-absolute top-0 end-0 m-2"&gt;Habis&lt;/span&gt;
+                                    @endif
+                                &lt;/div&gt;
+                                &lt;div class="card-body p-3"&gt;
+                                    &lt;h6 class="card-title fw-bold text-dark mb-2"&gt;{{ $book-&gt;title }}&lt;/h6&gt;
+                                    &lt;div class="text-muted small"&gt;&lt;i class="bi bi-person me-1"&gt;&lt;/i&gt; {{ $book-&gt;author }}&lt;/div&gt;
+                                    &lt;div class="text-muted small"&gt;&lt;i class="bi bi-building me-1"&gt;&lt;/i&gt; {{ $book-&gt;publisher }}&lt;/div&gt;
+                                    &lt;div class="text-muted small"&gt;&lt;i class="bi bi-calendar3 me-1"&gt;&lt;/i&gt; {{ $book-&gt;year }}&lt;/div&gt;
+                                &lt;/div&gt;
+                                &lt;div class="card-footer bg-white border-0 pt-0 pb-3"&gt;
+                                    @if($book-&gt;stock &gt; 0)
+                                        &lt;form action="{{ route('user.transactions.store') }}" method="POST"&gt;
+                                            @csrf
+                                            &lt;input type="hidden" name="book_id" value="{{ $book-&gt;id }}"&gt;
+                                            &lt;button type="submit" class="btn btn-primary btn-sm w-100" onclick="return confirm('Yakin ingin meminjam?');"&gt;
+                                                Pinjam Sekarang
+                                            &lt;/button&gt;
+                                        &lt;/form&gt;
+                                    @else
+                                        &lt;button class="btn btn-outline-secondary btn-sm w-100" disabled&gt;Tidak Tersedia&lt;/button&gt;
+                                    @endif
+                                &lt;/div&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                    @empty
+                        &lt;div class="col-12 text-center py-5"&gt;
+                            &lt;p class="text-muted fs-4"&gt;Belum ada buku tersedia.&lt;/p&gt;
+                        &lt;/div&gt;
+                    @endforelse
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/x-app-layout&gt;</code></pre>
+
+                <hr />
+
+                <!-- ========== MODUL 14 ========== -->
+                <h3>Modul 14: Riwayat Peminjaman (User)</h3>
+                <p>
+                    <strong>Tujuan</strong>: User melihat riwayat peminjaman dan
+                    mengajukan pengembalian.
+                </p>
+
+                <h4>
+                    View:
+                    <code
+                        >resources/views/user/transactions/index.blade.php</code
+                    >
+                </h4>
+                <pre><code class="language-html">&lt;x-app-layout&gt;
+    &lt;x-slot name="header"&gt;
+        &lt;h2 class="font-semibold text-xl text-gray-800 leading-tight"&gt;Riwayat Peminjaman Anda&lt;/h2&gt;
+    &lt;/x-slot&gt;
+
+    &lt;div class="py-12"&gt;
+        &lt;div class="max-w-7xl mx-auto sm:px-6 lg:px-8"&gt;
+            &lt;div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4"&gt;
+
+                @if(session('success'))
+                    &lt;div class="alert alert-success"&gt;{{ session('success') }}&lt;/div&gt;
+                @endif
+                @if(session('error'))
+                    &lt;div class="alert alert-danger"&gt;{{ session('error') }}&lt;/div&gt;
+                @endif
+
+                &lt;table class="table table-bordered table-striped mt-3"&gt;
+                    &lt;thead&gt;
+                        &lt;tr class="text-center"&gt;
+                            &lt;th&gt;No&lt;/th&gt;&lt;th&gt;Judul Buku&lt;/th&gt;&lt;th&gt;Tanggal Pinjam&lt;/th&gt;
+                            &lt;th&gt;Jatuh Tempo&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;&lt;th&gt;Tanggal Kembali&lt;/th&gt;&lt;th&gt;Aksi&lt;/th&gt;
+                        &lt;/tr&gt;
+                    &lt;/thead&gt;
+                    &lt;tbody&gt;
+                        @forelse($transactions as $transaction)
+                        &lt;tr&gt;
+                            &lt;td class="text-center"&gt;{{ $loop-&gt;iteration }}&lt;/td&gt;
+                            &lt;td&gt;{{ $transaction-&gt;book-&gt;title }}&lt;/td&gt;
+                            &lt;td&gt;{{ \Carbon\Carbon::parse($transaction-&gt;borrow_date)-&gt;format('d M Y') }}&lt;/td&gt;
+                            &lt;td&gt;{{ \Carbon\Carbon::parse($transaction-&gt;due_date)-&gt;format('d M Y') }}&lt;/td&gt;
+                            &lt;td&gt;
+                                @if($transaction-&gt;status == 'borrowed')
+                                    &lt;span class="badge bg-warning"&gt;Sedang Dipinjam&lt;/span&gt;
+                                @elseif($transaction-&gt;status == 'pending')
+                                    &lt;span class="badge bg-info"&gt;Menunggu Konfirmasi&lt;/span&gt;
+                                @else
+                                    &lt;span class="badge bg-success"&gt;Dikembalikan&lt;/span&gt;
+                                @endif
+                            &lt;/td&gt;
+                            &lt;td&gt;{{ $transaction-&gt;return_date ? \Carbon\Carbon::parse($transaction-&gt;return_date)-&gt;format('d M Y') : '-' }}&lt;/td&gt;
+                            &lt;td&gt;
+                                @if($transaction-&gt;status == 'borrowed')
+                                    &lt;form action="{{ route('user.transactions.return', $transaction) }}" method="POST" onsubmit="return confirm('Yakin ingin mengembalikan?');"&gt;
+                                        @csrf @method('PUT')
+                                        &lt;button class="btn btn-sm btn-primary"&gt;
+                                            &lt;i class="bi bi-arrow-return-left me-1"&gt;&lt;/i&gt; Kembalikan
+                                        &lt;/button&gt;
+                                    &lt;/form&gt;
+                                @elseif($transaction-&gt;status == 'pending')
+                                    &lt;span class="text-muted small"&gt;Sedang proses...&lt;/span&gt;
+                                @else
+                                    &lt;span class="text-success small fw-bold"&gt;&lt;i class="bi bi-check-all"&gt;&lt;/i&gt; Selesai&lt;/span&gt;
+                                @endif
+                            &lt;/td&gt;
+                        &lt;/tr&gt;
+                        @empty
+                        &lt;tr&gt;&lt;td colspan="7" class="text-center"&gt;Anda belum memiliki riwayat peminjaman.&lt;/td&gt;&lt;/tr&gt;
+                        @endforelse
+                    &lt;/tbody&gt;
+                &lt;/table&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/x-app-layout&gt;</code></pre>
+
+                <hr />
+
+                <!-- ========== MODUL 15 ========== -->
+                <h3>Modul 15: Dashboard Statistik</h3>
+                <p>
+                    <strong>Tujuan</strong>: Menampilkan statistik ringkasan
+                    berbeda untuk admin dan user.
+                </p>
+
+                <h4>
+                    View:
+                    <code>resources/views/dashboard.blade.php</code> (MODIFY)
+                </h4>
+                <p>
+                    Dashboard menampilkan card statistik berbeda berdasarkan
+                    role:
+                </p>
+                <p>
+                    <strong>Admin melihat</strong>: Total Buku, Anggota,
+                    Dipinjam, Pending, Kembali<br />
+                    <strong>User melihat</strong>: Total Pinjaman Saya, Sedang
+                    Dipinjam, Pending, Sudah Kembali
+                </p>
+
+                <pre><code class="language-html">&lt;x-app-layout&gt;
+    &lt;x-slot name="header"&gt;
+        &lt;h2 class="font-semibold text-xl text-gray-800 leading-tight"&gt;
+            {{ __('Dashboard') }}
+        &lt;/h2&gt;
+    &lt;/x-slot&gt;
+
+    &lt;div class="py-12"&gt;
+        &lt;div class="max-w-7xl mx-auto sm:px-6 lg:px-8"&gt;
+            &lt;div class="card border-0 shadow-sm rounded-4 overflow-hidden"&gt;
+                &lt;div class="card-body p-4 p-md-5"&gt;
+                    &lt;h2 class="fw-bold text-dark mb-4"&gt;Selamat Datang, {{ Auth::user()-&gt;name }}&lt;/h2&gt;
+
+                    @if(Auth::user()-&gt;role == 'admin')
+                        &lt;div class="row g-4 mb-5"&gt;
+                            @php
+                                $stats_items = [
+                                    ['label' =&gt; 'Total Buku', 'value' =&gt; $stats['total_books'], 'icon' =&gt; 'bi-book', 'bg' =&gt; 'bg-primary'],
+                                    ['label' =&gt; 'Anggota', 'value' =&gt; $stats['total_members'], 'icon' =&gt; 'bi-people', 'bg' =&gt; 'bg-success'],
+                                    ['label' =&gt; 'Dipinjam', 'value' =&gt; $stats['borrowed_count'], 'icon' =&gt; 'bi-arrow-repeat', 'bg' =&gt; 'bg-warning'],
+                                    ['label' =&gt; 'Pending', 'value' =&gt; $stats['pending_count'], 'icon' =&gt; 'bi-clock-history', 'bg' =&gt; 'bg-info'],
+                                    ['label' =&gt; 'Kembali', 'value' =&gt; $stats['returned_count'], 'icon' =&gt; 'bi-check-circle', 'bg' =&gt; 'bg-success'],
+                                ];
+                            @endphp
+
+                            @foreach($stats_items as $item)
+                            &lt;div class="col-6 col-md-4 col-lg"&gt;
+                                &lt;div class="card border-0 shadow-sm {{ $item['bg'] }} text-white h-100 position-relative overflow-hidden rounded-4"&gt;
+                                    &lt;div class="card-body p-4 position-relative" style="z-index: 2;"&gt;
+                                        &lt;h6 class="text-uppercase x-small fw-bold opacity-75 mb-1"&gt;{{ $item['label'] }}&lt;/h6&gt;
+                                        &lt;h1 class="display-5 fw-bold mb-0"&gt;{{ $item['value'] }}&lt;/h1&gt;
+                                    &lt;/div&gt;
+                                    &lt;i class="bi {{ $item['icon'] }} position-absolute" style="bottom: -10px; right: 5px; font-size: 3.5rem; opacity: 0.2; z-index: 1;"&gt;&lt;/i&gt;
+                                &lt;/div&gt;
+                            &lt;/div&gt;
+                            @endforeach
+                        &lt;/div&gt;
+
+                        &lt;div class="row g-4"&gt;
+                            &lt;div class="col-md-4"&gt;
+                                &lt;a href="{{ route('admin.books.index') }}" class="text-decoration-none"&gt;
+                                    &lt;div class="card border shadow-none rounded-4 p-4 h-100 text-center"&gt;
+                                        &lt;div class="rounded-circle bg-primary bg-opacity-10 p-3 text-primary mx-auto mb-3" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;"&gt;
+                                            &lt;i class="bi bi-collection fs-3"&gt;&lt;/i&gt;
+                                        &lt;/div&gt;
+                                        &lt;h5 class="fw-bold text-dark mb-1"&gt;Data Buku&lt;/h5&gt;
+                                        &lt;p class="text-muted small mb-0"&gt;Kelola koleksi buku &amp; stok.&lt;/p&gt;
+                                    &lt;/div&gt;
+                                &lt;/a&gt;
+                            &lt;/div&gt;
+                            &lt;div class="col-md-4"&gt;
+                                &lt;a href="{{ route('admin.transactions.index') }}" class="text-decoration-none"&gt;
+                                    &lt;div class="card border shadow-none rounded-4 p-4 h-100 text-center"&gt;
+                                        &lt;div class="rounded-circle bg-dark bg-opacity-10 p-3 text-dark mx-auto mb-3" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;"&gt;
+                                            &lt;i class="bi bi-journal-check fs-3"&gt;&lt;/i&gt;
+                                        &lt;/div&gt;
+                                        &lt;h5 class="fw-bold text-dark mb-1"&gt;Data Transaksi&lt;/h5&gt;
+                                        &lt;p class="text-muted small mb-0"&gt;Verifikasi peminjaman buku.&lt;/p&gt;
+                                    &lt;/div&gt;
+                                &lt;/a&gt;
+                            &lt;/div&gt;
+                            &lt;div class="col-md-4"&gt;
+                                &lt;a href="{{ route('admin.users.index') }}" class="text-decoration-none"&gt;
+                                    &lt;div class="card border shadow-none rounded-4 p-4 h-100 text-center"&gt;
+                                        &lt;div class="rounded-circle bg-success bg-opacity-10 p-3 text-success mx-auto mb-3" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;"&gt;
+                                            &lt;i class="bi bi-people fs-3"&gt;&lt;/i&gt;
+                                        &lt;/div&gt;
+                                        &lt;h5 class="fw-bold text-dark mb-1"&gt;Data Pengguna&lt;/h5&gt;
+                                        &lt;p class="text-muted small mb-0"&gt;Kelola informasi pengguna.&lt;/p&gt;
+                                    &lt;/div&gt;
+                                &lt;/a&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                    @else
+                        &lt;div class="row g-4 mb-5"&gt;
+                            @php
+                                $user_stats = [
+                                    ['label' =&gt; 'Total Pinjaman', 'value' =&gt; $stats['user_total'], 'icon' =&gt; 'bi-journal-album', 'bg' =&gt; 'bg-primary'],
+                                    ['label' =&gt; 'Sedang Dipinjam', 'value' =&gt; $stats['user_borrowed'], 'icon' =&gt; 'bi-arrow-repeat', 'bg' =&gt; 'bg-warning'],
+                                    ['label' =&gt; 'Pending', 'value' =&gt; $stats['user_pending'], 'icon' =&gt; 'bi-clock-history', 'bg' =&gt; 'bg-info'],
+                                    ['label' =&gt; 'Sudah Kembali', 'value' =&gt; $stats['user_returned'], 'icon' =&gt; 'bi-check-circle', 'bg' =&gt; 'bg-success'],
+                                ];
+                            @endphp
+
+                            @foreach($user_stats as $item)
+                            &lt;div class="col-6 col-md-3"&gt;
+                                &lt;div class="card border-0 shadow-sm {{ $item['bg'] }} text-white h-100 position-relative overflow-hidden rounded-4"&gt;
+                                    &lt;div class="card-body p-4 position-relative" style="z-index: 2;"&gt;
+                                        &lt;h6 class="text-uppercase x-small fw-bold opacity-75 mb-1"&gt;{{ $item['label'] }}&lt;/h6&gt;
+                                        &lt;h1 class="display-5 fw-bold mb-0"&gt;{{ $item['value'] }}&lt;/h1&gt;
+                                    &lt;/div&gt;
+                                    &lt;i class="bi {{ $item['icon'] }} position-absolute" style="bottom: -10px; right: 5px; font-size: 3.5rem; opacity: 0.2; z-index: 1;"&gt;&lt;/i&gt;
+                                &lt;/div&gt;
+                            &lt;/div&gt;
+                            @endforeach
+                        &lt;/div&gt;
+
+                        &lt;div class="row g-4"&gt;
+                            &lt;div class="col-md-6"&gt;
+                                &lt;a href="{{ route('user.books.index') }}" class="text-decoration-none text-dark"&gt;
+                                    &lt;div class="card border shadow-none rounded-4 p-4 h-100 text-center"&gt;
+                                        &lt;div class="rounded-circle bg-primary bg-opacity-10 p-3 text-primary mx-auto mb-3" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;"&gt;
+                                            &lt;i class="bi bi-search fs-3"&gt;&lt;/i&gt;
+                                        &lt;/div&gt;
+                                        &lt;h4 class="fw-bold mb-1"&gt;Jelajahi Koleksi&lt;/h4&gt;
+                                        &lt;p class="text-muted small mb-0"&gt;Temukan buku favorit Anda.&lt;/p&gt;
+                                    &lt;/div&gt;
+                                &lt;/a&gt;
+                            &lt;/div&gt;
+                            &lt;div class="col-md-6"&gt;
+                                &lt;a href="{{ route('user.transactions.index') }}" class="text-decoration-none text-dark"&gt;
+                                    &lt;div class="card border shadow-none rounded-4 p-4 h-100 text-center"&gt;
+                                        &lt;div class="rounded-circle bg-success bg-opacity-10 p-3 text-success mx-auto mb-3" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;"&gt;
+                                            &lt;i class="bi bi-clock-history fs-3"&gt;&lt;/i&gt;
+                                        &lt;/div&gt;
+                                        &lt;h4 class="fw-bold mb-1"&gt;Peminjaman Saya&lt;/h4&gt;
+                                        &lt;p class="text-muted small mb-0"&gt;Lihat status buku Anda.&lt;/p&gt;
+                                    &lt;/div&gt;
+                                &lt;/a&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                    @endif
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;style&gt;
+        .hover-translate-y { transition: transform 0.3s; }
+        .hover-translate-y:hover { transform: translateY(-5px); }
+        .bg-light-hover:hover { background-color: #f8f9fa; }
+        .x-small { font-size: 0.75rem; }
+    &lt;/style&gt;
+&lt;/x-app-layout&gt;</code></pre>
+
+                <hr />
+
+                <!-- ========== MODUL 16 ========== -->
+                <h3>Modul 16: Routes — Menyatukan Semuanya</h3>
+                <p>
+                    <strong>Tujuan</strong>: Mendefinisikan semua route dan
+                    menerapkan middleware.
+                </p>
+
+                <h4>File: <code>routes/web.php</code></h4>
+                <pre><code class="language-php">&lt;?php
+
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\BookController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\TransactionController;
+use Illuminate\Support\Facades\Route;
+
+// Redirect root ke login
+Route::get('/', function () {
+    return redirect()-&gt;route('login');
+});
+
+// Dashboard (semua user yang login)
+Route::get('/dashboard', function () {
+    $user = auth()-&gt;user();
+    $stats = [
+        'total_books' =&gt; \App\Models\Book::count(),
+        'total_members' =&gt; \App\Models\User::where('role', 'user')-&gt;count(),
+        'total_transactions' =&gt; \App\Models\Transaction::count(),
+        'borrowed_count' =&gt; \App\Models\Transaction::where('status', 'borrowed')-&gt;count(),
+        'pending_count' =&gt; \App\Models\Transaction::where('status', 'pending')-&gt;count(),
+        'returned_count' =&gt; \App\Models\Transaction::where('status', 'returned')-&gt;count(),
+
+        // Stats khusus user
+        'user_total' =&gt; \App\Models\Transaction::where('user_id', $user-&gt;id)-&gt;count(),
+        'user_borrowed' =&gt; \App\Models\Transaction::where('user_id', $user-&gt;id)-&gt;where('status', 'borrowed')-&gt;count(),
+        'user_pending' =&gt; \App\Models\Transaction::where('user_id', $user-&gt;id)-&gt;where('status', 'pending')-&gt;count(),
+        'user_returned' =&gt; \App\Models\Transaction::where('user_id', $user-&gt;id)-&gt;where('status', 'returned')-&gt;count(),
+    ];
+    return view('dashboard', compact('stats'));
+})-&gt;middleware(['auth', 'verified'])-&gt;name('dashboard');
+
+// Profile (bawaan Breeze)
+Route::middleware('auth')-&gt;group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])-&gt;name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])-&gt;name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])-&gt;name('profile.destroy');
+});
+
+// Admin Routes (hanya bisa diakses oleh role admin)
+Route::middleware(['auth', 'admin'])-&gt;prefix('admin')-&gt;name('admin.')-&gt;group(function () {
+    Route::resource('books', BookController::class);
+    Route::resource('users', UserController::class);
+    Route::resource('transactions', TransactionController::class);
+});
+
+// User Routes (semua user yang login)
+Route::middleware(['auth'])-&gt;prefix('user')-&gt;name('user.')-&gt;group(function () {
+    Route::get('books', [BookController::class, 'userIndex'])-&gt;name('books.index');
+    Route::post('transactions', [TransactionController::class, 'storeUser'])-&gt;name('transactions.store');
+    Route::put('transactions/{transaction}/return', [TransactionController::class, 'returnBook'])-&gt;name('transactions.return');
+    Route::get('transactions', [TransactionController::class, 'userIndex'])-&gt;name('transactions.index');
+});
+
+require __DIR__.'/auth.php';</code></pre>
+
+                <blockquote class="important">
+                    <p class="alert-title">❗ IMPORTANT</p>
+                    <p><strong>Penjelasan Konsep Route:</strong></p>
+                    <ul>
+                        <li>
+                            <code>prefix('admin')</code> → Semua URL diawali
+                            <code>/admin/...</code>
+                        </li>
+                        <li>
+                            <code>name('admin.')</code> → Semua nama route
+                            diawali <code>admin.</code> (contoh:
+                            <code>admin.books.index</code>)
+                        </li>
+                        <li>
+                            <code>middleware(['auth', 'admin'])</code> → Harus
+                            login DAN role admin
+                        </li>
+                        <li>
+                            <code>Route::resource()</code> → Otomatis membuat 7
+                            route CRUD (index, create, store, show, edit,
+                            update, destroy)
+                        </li>
+                    </ul>
+                </blockquote>
+
+                <hr />
+
+                <!-- ========== MODUL 17 ========== -->
+                <h3>Modul 17: Testing &amp; Finishing</h3>
+                <p><strong>Langkah pengujian:</strong></p>
+                <pre><code class="language-bash"># 1. Pastikan database sudah dimigrasikan &amp; di-seed
+php artisan migrate:fresh --seed
+
+# 2. Buat symbolic link storage
+php artisan storage:link
+
+# 3. Jalankan server
+php artisan serve
+
+# 4. Jalankan Vite (di terminal terpisah)
+npm run dev</code></pre>
+
+                <p><strong>Checklist Testing:</strong></p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Test Case</th>
+                            <th>Role</th>
+                            <th>Expected</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>
+                                Login sebagai admin (admin@admin.com / password)
+                            </td>
+                            <td>Admin</td>
+                            <td>Muncul dashboard admin</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Tambah buku baru dengan cover</td>
+                            <td>Admin</td>
+                            <td>Buku masuk ke daftar</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Edit data buku</td>
+                            <td>Admin</td>
+                            <td>Data berubah</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Hapus buku</td>
+                            <td>Admin</td>
+                            <td>Buku terhapus</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Tambah user baru</td>
+                            <td>Admin</td>
+                            <td>User terdaftar</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>
+                                Login sebagai user (user@user.com / password)
+                            </td>
+                            <td>User</td>
+                            <td>Muncul dashboard user</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>Lihat katalog buku</td>
+                            <td>User</td>
+                            <td>Tampil card buku</td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>Pinjam buku</td>
+                            <td>User</td>
+                            <td>Stok berkurang, muncul di riwayat</td>
+                        </tr>
+                        <tr>
+                            <td>9</td>
+                            <td>Kembalikan buku</td>
+                            <td>User</td>
+                            <td>Status berubah ke "Pending"</td>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+                            <td>Login admin → Konfirmasi pengembalian</td>
+                            <td>Admin</td>
+                            <td>Status "Dikembalikan", stok kembali</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <hr />
+
+                <!-- ========== DIAGRAM ALUR ========== -->
+                <h2>Diagram Alur Aplikasi</h2>
+                <div class="mermaid">
+flowchart TD
+    A["Buka Aplikasi"] --> B{"Sudah Login?"}
+    B -->|Tidak| C["Halaman Login"]
+    B -->|Ya| D{"Role User?"}
+    D -->|Admin| E["Dashboard Admin"]
+    E --> F["Kelola Buku CRUD"]
+    E --> G["Kelola Transaksi"]
+    E --> H["Kelola Pengguna"]
+    G --> G1["Konfirmasi Pengembalian"]
+    D -->|User| I["Dashboard User"]
+    I --> J["Jelajahi Katalog Buku"]
+    I --> K["Riwayat Pinjaman Saya"]
+    J --> L["Klik Pinjam Buku"]
+    L --> M["Stok Berkurang"]
+    K --> N["Klik Kembalikan"]
+    N --> O["Status: Pending"]
+    O --> G1
+    G1 --> P["Status: Returned + Stok Kembali"]
+                </div>
+
+                <hr />
+
+                <!-- ========== AKUN DEFAULT ========== -->
+                <h2>Akun Default (Setelah Seeding)</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Role</th>
+                            <th>Email</th>
+                            <th>Password</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Admin</td>
+                            <td>admin@admin.com</td>
+                            <td>password</td>
+                        </tr>
+                        <tr>
+                            <td>User</td>
+                            <td>user@user.com</td>
+                            <td>password</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <br /><br />
+                <p
+                    style="
+                        text-align: center;
+                        color: var(--text-muted);
+                        font-size: 0.85em;
+                    "
+                >
+                    — Selesai — Tutorial Sistem Peminjaman Buku © 2026 —
+                </p>
+            </div>
+
+            <!-- Highlight.js -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/php.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/ini.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/xml.min.js"></script>
+            <!-- Mermaid -->
+            <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+            <script>
+                hljs.highlightAll();
+                mermaid.initialize({
+                    startOnLoad: true,
+                    theme: "default",
+                    themeVariables: {
+                        primaryColor: "#dbeafe",
+                        primaryTextColor: "#1f2328",
+                        primaryBorderColor: "#93c5fd",
+                        lineColor: "#0969da",
+                        secondaryColor: "#f6f8fa",
+                        tertiaryColor: "#ffffff",
+                        fontFamily: "Inter, sans-serif",
+                    },
+                });
+
+                // Auto-generate TOC and Step styling
+                document.addEventListener("DOMContentLoaded", () => {
+                    const headings = document.querySelectorAll("h3");
+                    const menu = document.getElementById("toc-menu");
+
+                    let index = 1;
+                    headings.forEach((h3) => {
+                        if (h3.innerText.includes("Modul")) {
+                            const id = "modul-" + index;
+                            h3.id = id;
+
+                            const textParts = h3.innerText.split(":");
+                            const numStr = textParts[0]
+                                .replace("Modul ", "")
+                                .trim();
+                            const title = textParts[1]
+                                ? textParts[1].trim()
+                                : h3.innerText;
+
+                            // Sidebar menu item
+                            const li = document.createElement("li");
+                            li.innerHTML = `<a href="#${id}"><span class="modul-num">${numStr}</span><span class="modul-title">${title}</span></a>`;
+                            menu.appendChild(li);
+
+                            // Restyle the h3 in content as a module banner
+                            h3.classList.add("modul-heading");
+                            h3.innerHTML = `<span class="modul-badge">${numStr}</span><span class="modul-heading-title">${title}</span>`;
+
+                            index++;
+
+                            // Prevent navbar overlapping text if fixed header ever used
+                            h3.style.scrollMarginTop = "40px";
+                        }
+                    });
+
+                    // Terapkan class step-list ke semua element <ol> (kecuali di dalam blockquote)
+                    document.querySelectorAll(".container ol").forEach((ol) => {
+                        if (!ol.closest("blockquote")) {
+                            ol.classList.add("step-list");
+                        }
+                    });
+
+                    // Filter / Search sidebar
+                    const filterInput =
+                        document.getElementById("sidebar-filter");
+                    if (filterInput) {
+                        filterInput.addEventListener("input", (e) => {
+                            const query = e.target.value.toLowerCase();
+                            document
+                                .querySelectorAll(".sidebar-menu li")
+                                .forEach((li) => {
+                                    const text = li.textContent.toLowerCase();
+                                    li.style.display = text.includes(query)
+                                        ? ""
+                                        : "none";
+                                });
+                        });
+                    }
+
+                    // Update Navigasi Aktif saat di-scroll + progress bar
+                    const sections = Array.from(headings).filter(
+                        (h) => h.id && h.id.startsWith("modul-"),
+                    );
+                    const navLinks =
+                        document.querySelectorAll(".sidebar-menu a");
+                    const progressFill =
+                        document.getElementById("progress-fill");
+                    const progressLabel =
+                        document.getElementById("progress-label");
+
+                    window.addEventListener("scroll", () => {
+                        let currentId = "";
+                        let currentIndex = 0;
+                        sections.forEach((sec, i) => {
+                            const sectionTop = sec.offsetTop;
+                            if (window.scrollY >= sectionTop - 120) {
+                                currentId = sec.getAttribute("id");
+                                currentIndex = i + 1;
+                            }
+                        });
+
+                        navLinks.forEach((a) => {
+                            a.classList.remove("active");
+                            if (
+                                currentId &&
+                                a.getAttribute("href") === "#" + currentId
+                            ) {
+                                a.classList.add("active");
+                                // Scroll active item into view in sidebar
+                                a.scrollIntoView({
+                                    block: "nearest",
+                                    behavior: "smooth",
+                                });
+                            }
+                        });
+
+                        // Update progress bar
+                        if (
+                            sections.length > 0 &&
+                            progressFill &&
+                            progressLabel
+                        ) {
+                            const pct = Math.round(
+                                (currentIndex / sections.length) * 100,
+                            );
+                            progressFill.style.width = pct + "%";
+                            progressLabel.textContent =
+                                currentIndex + "/" + sections.length;
+                        }
+                    });
+                });
+            </script>
+        </div>
+        <!-- Tutup main-content -->
+    </body>
+</html>
