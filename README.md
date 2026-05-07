@@ -1,7 +1,5 @@
 # BukuLoan - Sistem Informasi Peminjaman Buku 📚
 
-![BukuLoan Hero Banner](public/assets/img/hero.png)
-
 [![Laravel Version](https://img.shields.io/badge/Laravel-12.x-red.svg)](https://laravel.com)
 [![PHP Version](https://img.shields.io/badge/PHP-8.2%2B-blue.svg)](https://php.net)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -94,10 +92,9 @@ Gunakan kredensial berikut untuk masuk ke sistem pertama kali:
 - Email: `admin@admin.com`
 - Password: `password` (Silakan buat melalui register atau seeder jika perlu)
 
----
-
-## 📸 Dokumentasi
-Aplikasi ini memiliki desain yang bersih dan minimalis menggunakan **Tailwind CSS**, memberikan pengalaman pengguna yang premium dan profesional bagi penguji maupun pengguna umum.
+**User:**
+- Email: `user@user.com`
+- Password: `password` (Silakan buat melalui register atau seeder jika perlu)
 
 ---
 
